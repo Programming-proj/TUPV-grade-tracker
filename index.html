@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | TUP-Red Edition</title>
+    <title>TUPV AIMS | Secure Portal</title>
     <style>
         :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; --text: #333; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         .hidden { display: none !important; }
 
-        /* Login - TUP Red Theme */
+        /* Login */
         .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--tup-red), #200000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; border-top: 5px solid var(--tup-red); }
         .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
 
-        /* Sidebar - TUP Red Theme */
+        /* Sidebar */
         .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; }
         .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 1.2rem; }
         .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
@@ -24,7 +24,7 @@
         .content { margin-left: 240px; padding: 40px; }
         .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
         
-        /* Modal - TUP Red Theme */
+        /* Modal */
         .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; border-top: 8px solid var(--tup-red); }
         .input-group { margin: 15px 0; }
@@ -39,10 +39,8 @@
         .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
         .btn-prime:hover { background: var(--tup-dark); }
         .btn-modify { background: #fff; color: var(--tup-red); border: 1px solid var(--tup-red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        .btn-modify:hover { background: var(--tup-red); color: white; }
         .btn-yn { padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; min-width: 100px; }
         
-        /* Prediction Badges */
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
         .safe { background: #e6fffa; color: #234e52; }
         .need { background: #fffaf0; color: #7b341e; }
@@ -126,7 +124,7 @@
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('tupv_v5_red')) || [];
+        let db = JSON.parse(localStorage.getItem('tupv_v6_secure')) || [];
         let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [] };
 
         function handleGlobalEnter(e) {
@@ -144,7 +142,7 @@
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 render();
-            } else { alert("ACCESS DENIED"); }
+            } else { alert("ACCESS DENIED: Check Username/Password"); }
         }
 
         function switchTab(tab) {
@@ -156,11 +154,22 @@
         }
 
         function addS() {
-            const n = document.getElementById('nName').value;
-            const a = document.getElementById('nAge').value;
-            if (!n || !a) return;
+            const nameInput = document.getElementById('nName');
+            const ageInput = document.getElementById('nAge');
+            const n = nameInput.value.trim();
+            const a = ageInput.value.trim();
+
+            if (!n || !a) return alert("Please provide both name and age.");
+
+            // DUPLICATE CHECK
+            const exists = db.some(s => s.name.toLowerCase() === n.toLowerCase());
+            if (exists) {
+                alert(`STUDENT ALREADY RECORDED: "${n.toUpperCase()}" is already in the system.`);
+                return;
+            }
+
             db.push({ name: n, age: a, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
-            document.getElementById('nName').value = ''; document.getElementById('nAge').value = '';
+            nameInput.value = ''; ageInput.value = '';
             save();
         }
 
@@ -210,7 +219,6 @@
             db.forEach((s, i) => {
                 if (!s.name.toLowerCase().includes(q)) return;
                 
-                // C++ Logic Prediction
                 let predict = "";
                 let curPoints = (s.prelim !== -1 ? s.prelim * 0.3 : 0) + (s.midterm !== -1 ? s.midterm * 0.3 : 0) + (s.endterm !== -1 ? s.endterm * 0.4 : 0);
                 let weightLeft = (s.prelim === -1 ? 0.3 : 0) + (s.midterm === -1 ? 0.3 : 0) + (s.endterm === -1 ? 0.4 : 0);
@@ -249,7 +257,7 @@
         }
 
         function del(i) { if(confirm("Delete student?")) { db.splice(i,1); save(); } }
-        function save() { localStorage.setItem('tupv_v5_red', JSON.stringify(db)); render(); }
+        function save() { localStorage.setItem('tupv_v6_secure', JSON.stringify(db)); render(); }
         function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
         function wipe() { if(confirm("Wipe all records?")) { db = []; save(); } }
     </script>
