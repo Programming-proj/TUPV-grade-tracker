@@ -3,73 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Subject Portal</title>
+    <title>TUPV AIMS | Universal Portal</title>
     <style>
         :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         .hidden { display: none !important; }
 
-        /* Login */
-        .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--tup-red), #200000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; border-top: 5px solid var(--tup-red); }
-        .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-
-        /* Sidebar */
-        .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; }
+        /* Sidebar & Layout */
+        .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
         .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+        .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
         .sidebar li:hover, .sidebar li.active { background: var(--tup-dark); border-left: 5px solid #ff0000; }
+        .content { margin-left: 240px; padding: 30px; }
 
-        .content { margin-left: 240px; padding: 40px; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
+        /* Cards & UI */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
+        .dna-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #eee; font-size: 0.75rem; margin-right: 5px; font-weight: bold; color: var(--tup-red); }
         
-        /* Modal */
+        /* Modals */
         .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; border-top: 8px solid var(--tup-red); }
-        .input-group { margin: 15px 0; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--tup-red); }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 4px; box-sizing: border-box; outline: none; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); }
+        .sim-slider { width: 100%; margin: 15px 0; accent-color: var(--tup-red); }
 
-        table { width: 100%; border-collapse: collapse; background: white; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
         th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); font-size: 0.8rem; color: var(--tup-red); }
         td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
-        
-        .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-modify { background: #fff; color: var(--tup-red); border: 1px solid var(--tup-red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
-        .safe { background: #e6fffa; color: #234e52; }
-        .need { background: #fffaf0; color: #7b341e; }
-        .crit { background: #fff5f5; color: #c53030; }
+
+        .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .search-input { padding: 10px; border-radius: 4px; border: 1px solid #ddd; width: 250px; }
     </style>
 </head>
 <body onkeydown="handleGlobalEnter(event)">
 
-    <div id="login-screen" class="overlay">
-        <div class="login-box">
-            <h1 style="color:var(--tup-red); margin:0;">TUPV</h1>
-            <p style="margin:0 0 20px 0; font-size:0.8rem; letter-spacing:2px; color:#666;">AIMS PORTAL</p>
-            <input type="text" id="uIn" placeholder="Username (TUPV)">
-            <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
+    <div id="login-screen" class="overlay" style="position:fixed; inset:0; background:var(--tup-red); z-index:2000; display:flex; justify-content:center; align-items:center;">
+        <div style="background:white; padding:40px; border-radius:8px; text-align:center; width:300px;">
+            <h2 style="color:var(--tup-red)">TUPV AIMS</h2>
+            <input type="text" id="uIn" placeholder="Username (TUPV)" style="width:100%; margin:10px 0; padding:10px;">
+            <input type="password" id="pIn" placeholder="Password (MXE 1-A)" style="width:100%; margin:10px 0; padding:10px;">
             <button class="btn-prime" onclick="login()">LOGIN (Enter)</button>
+        </div>
+    </div>
+
+    <div id="sim-modal" class="modal-bg hidden">
+        <div class="modal-card">
+            <h3 id="sim-name" style="margin-top:0; color:var(--tup-red)"></h3>
+            <p>Drag the slider to see how a potential **Endterm** grade affects the average.</p>
+            <div style="text-align:center; margin:20px 0;">
+                <label>Simulated Endterm: <b id="sim-val">5.00</b></label>
+                <input type="range" min="1" max="10" step="0.1" value="5" class="sim-slider" id="sim-input" oninput="updateSim()">
+                <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-top:10px;">
+                    <span style="font-size:0.9rem">Final Average Result:</span><br>
+                    <b id="sim-result" style="font-size:1.8rem; color:var(--tup-red)">---</b>
+                </div>
+            </div>
+            <button class="btn-prime" onclick="closeSim()">Close Simulator</button>
         </div>
     </div>
 
     <div id="score-modal" class="modal-bg hidden">
         <div class="modal-card">
-            <h3 id="m-title" style="margin-top:0; color:var(--tup-red);"></h3>
+            <h3 id="m-title" style="color:var(--tup-red)"></h3>
             <div id="step-inputs">
-                <div class="input-group"><label id="raw-label">Raw Score:</label><input type="number" id="m-raw"></div>
-                <div class="input-group"><label id="tot-label">Total Score:</label><input type="number" id="m-tot"></div>
-                <button class="btn-prime" onclick="processStep()">NEXT STEP (Enter)</button>
+                <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; padding:10px; margin-bottom:10px;">
+                <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; padding:10px; margin-bottom:10px;">
+                <button class="btn-prime" onclick="processStep()">Next Step (Enter)</button>
             </div>
             <div id="step-confirm" class="hidden" style="text-align:center;">
-                <p><strong>Add another activity?</strong></p>
-                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-                    <button style="padding:10px 20px; background:#38a169; color:white; border:none; border-radius:4px; cursor:pointer;" onclick="handleYN(true)">YES</button>
-                    <button style="padding:10px 20px; background:var(--tup-red); color:white; border:none; border-radius:4px; cursor:pointer;" onclick="handleYN(false)">NO</button>
+                <p>Add another activity?</p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button class="btn-sec" style="background:#38a169; color:white;" onclick="handleYN(true)">YES</button>
+                    <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="handleYN(false)">NO</button>
                 </div>
             </div>
-            <button onclick="closeM()" style="margin-top:20px; background:none; border:none; color:#999; cursor:pointer; width:100%;">Cancel</button>
+            <button onclick="closeM()" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
@@ -79,55 +86,61 @@
             <ul>
                 <li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Overview Dash</li>
                 <li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Records</li>
-                <li onclick="wipe()" style="margin-top:50px;">🧹 Wipe System</li>
-                <li onclick="logout()" style="color:#ffaaaa">🔒 Logout</li>
+                <li id="nav-sys" onclick="switchTab('sys')">⚙️ System Tools</li>
+                <li onclick="location.reload()" style="color:#ffaaaa; margin-top:20px;">🔒 Logout</li>
             </ul>
         </nav>
 
         <main class="content">
             <div id="view-dash">
-                <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h2 id="dash-title">Academic Overview</h2>
-                    <select id="subject-filter" onchange="render()" style="padding:10px; border-radius:4px; border:1px solid #ddd;">
-                        <option value="Chemistry">Chemistry for Engineers</option>
-                        <option value="AutoCad">AutoCad</option>
-                        <option value="Math">Math in Modern World</option>
-                        <option value="Calculus">Differential Calculus</option>
-                        <option value="Programming">Programming</option>
-                    </select>
-                </header>
-
-                <div class="card">
-                    <h3 style="margin-top:0;">Enroll Student to Subject</h3>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
+                    <div>
+                        <h2 style="margin:0">Academic Overview</h2>
+                        <div id="dna-container" style="margin-top:5px;"></div>
+                    </div>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="nName" placeholder="Full Name" style="padding:12px; flex:2; border:1px solid #ddd; border-radius:4px;">
-                        <input type="number" id="nAge" placeholder="Age" style="padding:12px; flex:0.5; border:1px solid #ddd; border-radius:4px;">
-                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL (Enter)</button>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search student name..." onkeyup="render()">
+                        <select id="sub-sel" onchange="render()" style="padding:10px; border-radius:4px; border:1px solid #ddd;">
+                            <option value="Chemistry">Chemistry for Engineers</option>
+                            <option value="AutoCad">AutoCad</option>
+                            <option value="Math">Math in Modern World</option>
+                            <option value="Calculus">Differential Calculus</option>
+                            <option value="Programming">Programming</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="card">
-                    <table id="table-dash">
-                        <thead><tr><th>Name</th><th>P (30%)</th><th>M (30%)</th><th>E (40%)</th><th>Average</th><th>Target Prediction</th></tr></thead>
-                        <tbody id="dash-list"></tbody>
-                    </table>
+                    <h3 style="margin-top:0;">Enroll New Student (All Subjects)</h3>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="nName" placeholder="Full Name" style="padding:12px; flex:2; border:1px solid #ddd; border-radius:4px;">
+                        <input type="number" id="nAge" placeholder="Age" style="padding:12px; flex:0.5; border:1px solid #ddd; border-radius:4px;">
+                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL STUDENT</button>
+                    </div>
                 </div>
+
+                <div class="card"><table id="dash-list"></table></div>
             </div>
 
             <div id="view-edit" class="hidden">
-                <header style="margin-bottom:20px;"><h2>Score Management</h2></header>
+                <h2>Manage Grades</h2>
+                <div class="card"><table id="edit-list"></table></div>
+            </div>
+
+            <div id="view-sys" class="hidden">
+                <h2>System Tools</h2>
                 <div class="card">
-                    <table id="edit-table">
-                        <thead><tr><th>Student Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Remove</th></tr></thead>
-                        <tbody id="edit-list"></tbody>
-                    </table>
+                    <h3>Backup String</h3>
+                    <textarea id="backup-str" style="width:100%; height:80px; font-family:monospace; padding:10px; margin-bottom:10px;"></textarea>
+                    <button class="btn-sec" onclick="generateBackup()">Generate</button>
+                    <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="restoreBackup()">Restore</button>
                 </div>
+                <button class="btn-sec" style="background:#cc0000; color:white;" onclick="wipe()">WIPE ALL DATA</button>
             </div>
         </main>
     </div>
 
     <script>
-        // Subject Configurations
         const CONFIG = {
             "Chemistry": { act: 0.6, exam: 0.4, att: 0 },
             "AutoCad": { act: 0.6, exam: 0.4, att: 0 },
@@ -136,8 +149,9 @@
             "Programming": { act: 0.5, exam: 0.4, att: 0.1 }
         };
 
-        let db = JSON.parse(localStorage.getItem('tupv_v7_subjects')) || [];
+        let db = JSON.parse(localStorage.getItem('tupv_v9_final')) || [];
         let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [], attScore: 0 };
+        let simIdx = -1;
 
         function handleGlobalEnter(e) {
             if (e.key === 'Enter') {
@@ -150,150 +164,58 @@
         }
 
         function login() {
-            if (document.getElementById('uIn').value === "TUPV" && document.getElementById('pIn').value === "MXE 1-A") {
+            if(document.getElementById('uIn').value==="TUPV" && document.getElementById('pIn').value==="MXE 1-A") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 render();
-            } else { alert("Access Denied"); }
-        }
-
-        function logout() {
-            document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('app').classList.add('hidden');
+            } else { alert("Wrong Credentials"); }
         }
 
         function switchTab(tab) {
-            document.getElementById('view-dash').classList.toggle('hidden', tab !== 'dash');
-            document.getElementById('view-edit').classList.toggle('hidden', tab !== 'edit');
-            document.getElementById('nav-dash').classList.toggle('active', tab === 'dash');
-            document.getElementById('nav-edit').classList.toggle('active', tab === 'edit');
+            ['dash', 'edit', 'sys'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+            document.getElementById('view-'+tab).classList.remove('hidden');
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+            document.getElementById('nav-'+tab).classList.add('active');
             render();
         }
 
         function addS() {
             const n = document.getElementById('nName').value.trim();
             const a = document.getElementById('nAge').value.trim();
-            const sub = document.getElementById('subject-filter').value;
-            if (!n || !a) return alert("Fill all fields");
+            if(!n || !a) return;
+            
+            // Check if student exists globally
+            if(db.some(s => s.name.toLowerCase() === n.toLowerCase())) return alert("Student already exists!");
 
-            const exists = db.some(s => s.name.toLowerCase() === n.toLowerCase() && s.subject === sub);
-            if (exists) return alert("Student already recorded for this subject!");
+            // Create entry for EVERY subject
+            Object.keys(CONFIG).forEach(subKey => {
+                db.push({ name: n, age: a, subject: subKey, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
+            });
 
-            db.push({ name: n, age: a, subject: sub, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
             document.getElementById('nName').value = ''; document.getElementById('nAge').value = '';
             save();
         }
 
-        function openP(i, term) {
-            const sub = db[i].subject;
-            state = { idx: i, term: term, mode: 'weekly', weeklyData: [], attScore: 0 };
-            showInputStep();
-            document.getElementById('score-modal').classList.remove('hidden');
-        }
-
-        function showInputStep() {
-            document.getElementById('step-inputs').classList.remove('hidden');
-            document.getElementById('step-confirm').classList.add('hidden');
-            
-            let label = state.mode === 'weekly' ? `Weekly Act #${state.weeklyData.length + 1}` : 
-                       (state.mode === 'exam' ? 'Major Exam' : 'Attendance Score');
-            
-            document.getElementById('m-title').innerText = `${state.term.toUpperCase()}: ${label}`;
-            document.getElementById('m-raw').value = ''; document.getElementById('m-tot').value = '';
-            
-            if(state.mode === 'att') {
-                document.getElementById('m-tot').value = "100"; // Assume attendance is out of 100%
-            }
-            document.getElementById('m-raw').focus();
-        }
-
-        function processStep() {
-            const r = parseFloat(document.getElementById('m-raw').value);
-            const t = parseFloat(document.getElementById('m-tot').value);
-            if (isNaN(r) || isNaN(t) || t <= 0) return alert("Invalid Scores");
-
-            const scaled = ((r / t) * 9) + 1;
-            const sub = db[state.idx].subject;
-            const cfg = CONFIG[sub];
-
-            if (state.mode === 'weekly') {
-                state.weeklyData.push(scaled);
-                document.getElementById('step-inputs').classList.add('hidden');
-                document.getElementById('step-confirm').classList.remove('hidden');
-            } 
-            else if (state.mode === 'exam') {
-                state.examScore = scaled;
-                if (cfg.att > 0) {
-                    state.mode = 'att';
-                    showInputStep();
-                } else {
-                    finalizeGrade();
-                }
-            }
-            else if (state.mode === 'att') {
-                state.attScore = scaled;
-                finalizeGrade();
-            }
-        }
-
-        function finalizeGrade() {
-            const cfg = CONFIG[db[state.idx].subject];
-            const wAvg = state.weeklyData.reduce((a, b) => a + b, 0) / state.weeklyData.length;
-            
-            // Apply Subject Specific Weighting
-            const finalTerm = (wAvg * cfg.act) + (state.examScore * cfg.exam) + (state.attScore * cfg.att);
-            
-            db[state.idx][state.term.toLowerCase()] = finalTerm;
-            recalc(db[state.idx]);
-            save(); closeM();
-        }
-
-        function handleYN(yes) {
-            if (yes) { state.mode = 'weekly'; showInputStep(); } 
-            else { state.mode = 'exam'; showInputStep(); }
-        }
-
         function render() {
-            const sub = document.getElementById('subject-filter').value;
-            const dList = document.getElementById('dash-list');
-            const eList = document.getElementById('edit-list');
-            dList.innerHTML = ''; eList.innerHTML = '';
+            const currentSub = document.getElementById('sub-sel').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const cfg = CONFIG[currentSub];
+            
+            document.getElementById('dna-container').innerHTML = `
+                <span class="dna-pill">Activities: ${cfg.act*100}%</span>
+                <span class="dna-pill">Exams: ${cfg.exam*100}%</span>
+                ${cfg.att > 0 ? `<span class="dna-pill">Attendance: ${cfg.att*100}%</span>` : ''}
+            `;
 
-            db.forEach((s, i) => {
-                if (s.subject !== sub) return;
-                
-                let curPts = (s.prelim !== -1 ? s.prelim * 0.3 : 0) + (s.midterm !== -1 ? s.midterm * 0.3 : 0) + (s.endterm !== -1 ? s.endterm * 0.4 : 0);
-                let wLeft = (s.prelim === -1 ? 0.3 : 0) + (s.midterm === -1 ? 0.3 : 0) + (s.endterm === -1 ? 0.4 : 0);
-                let predict = wLeft === 0 ? (s.avg >= 5.0 ? "PASSED" : "FAILED") : ((5.0 - curPts) / wLeft);
+            let dHTML = `<tr><th>Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Average</th><th>What-If</th></tr>`;
+            let eHTML = `<tr><th>Name</th><th>Edit P</th><th>Edit M</th><th>Edit E</th><th>Action</th></tr>`;
 
-                dList.innerHTML += `<tr>
+            db.filter(s => s.subject === currentSub && s.name.toLowerCase().includes(searchTerm)).forEach(s => {
+                const i = db.indexOf(s);
+                dHTML += `<tr>
                     <td><b>${s.name.toUpperCase()}</b></td>
                     <td>${s.prelim===-1?'-':s.prelim.toFixed(2)}</td>
                     <td>${s.midterm===-1?'-':s.midterm.toFixed(2)}</td>
                     <td>${s.endterm===-1?'-':s.endterm.toFixed(2)}</td>
-                    <td><b>${s.avg.toFixed(2)}</b></td>
-                    <td>${typeof predict === 'string' ? predict : 'Need ' + predict.toFixed(2)}</td>
-                </tr>`;
-
-                eList.innerHTML += `<tr>
-                    <td><b>${s.name.toUpperCase()}</b></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'prelim')">EDIT P</button></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'midterm')">EDIT M</button></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'endterm')">EDIT E</button></td>
-                    <td><button onclick="del(${i})">🗑️</button></td>
-                </tr>`;
-            });
-        }
-
-        function recalc(s) {
-            let p = s.prelim===-1?0:s.prelim, m = s.midterm===-1?0:s.midterm, e = s.endterm===-1?0:s.endterm;
-            s.avg = (p * 0.3) + (m * 0.3) + (e * 0.4);
-        }
-
-        function save() { localStorage.setItem('tupv_v7_subjects', JSON.stringify(db)); render(); }
-        function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
-        function wipe() { if(confirm("Wipe all data?")) { db = []; save(); } }
-        function del(i) { if(confirm("Delete student?")) { db.splice(i,1); save(); } }
-    </script>
-</body>
-</html>
+                    <td style="color:var(--tup-red)"><b>${s.avg.toFixed(2)}</b></td>
+                    <td><button class="btn-sec
