@@ -3,49 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Master Portal</title>
+    <title>TUPV AIMS | TUP-Red Edition</title>
     <style>
-        :root { --aims-blue: #1a3a5f; --aims-light: #2c5282; --bg: #f0f2f5; --tup-red: #800000; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
+        :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; --text: #333; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         .hidden { display: none !important; }
 
-        /* Login */
-        .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--aims-blue), #000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; }
+        /* Login - TUP Red Theme */
+        .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--tup-red), #200000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; border-top: 5px solid var(--tup-red); }
         .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
 
-        /* Sidebar */
-        .sidebar { width: 240px; height: 100vh; background: var(--aims-blue); color: white; position: fixed; }
-        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        /* Sidebar - TUP Red Theme */
+        .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; }
+        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 1.2rem; }
         .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
-        .sidebar li:hover, .sidebar li.active { background: var(--aims-light); border-left: 4px solid #fff; }
+        .sidebar li:hover, .sidebar li.active { background: var(--tup-dark); border-left: 5px solid #ff0000; }
 
-        /* Main */
+        /* Main Content */
         .content { margin-left: 240px; padding: 40px; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
         
-        /* Modal */
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; }
+        /* Modal - TUP Red Theme */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; border-top: 8px solid var(--tup-red); }
         .input-group { margin: 15px 0; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--tup-red); }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 4px; font-size: 1rem; box-sizing: border-box; outline: none; }
+        .input-group input:focus { border-color: var(--tup-red); }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; background: #f8f9fa; padding: 12px; border-bottom: 2px solid #dee2e6; font-size: 0.9rem; color: #666; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); font-size: 0.85rem; color: var(--tup-red); text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
         
-        .btn-prime { background: var(--aims-blue); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-modify { background: #e2e8f0; color: #4a5568; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-        .btn-modify:hover { background: var(--aims-blue); color: white; }
-        .btn-yn { padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-prime:hover { background: var(--tup-dark); }
+        .btn-modify { background: #fff; color: var(--tup-red); border: 1px solid var(--tup-red); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+        .btn-modify:hover { background: var(--tup-red); color: white; }
+        .btn-yn { padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; min-width: 100px; }
+        
+        /* Prediction Badges */
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .safe { background: #e6fffa; color: #234e52; }
+        .need { background: #fffaf0; color: #7b341e; }
+        .crit { background: #fff5f5; color: #c53030; }
     </style>
 </head>
 <body onkeydown="handleGlobalEnter(event)">
 
     <div id="login-screen" class="overlay">
         <div class="login-box">
-            <h2 style="color:var(--aims-blue)">TUPV AIMS</h2>
+            <h1 style="color:var(--tup-red); margin:0;">TUPV</h1>
+            <p style="margin:0 0 20px 0; font-size:0.8rem; letter-spacing:2px; color:#666;">AIMS PORTAL</p>
             <input type="text" id="uIn" placeholder="Username (TUPV)">
             <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
             <button class="btn-prime" onclick="login()">LOGIN (Enter)</button>
@@ -54,20 +63,20 @@
 
     <div id="score-modal" class="modal-bg hidden">
         <div class="modal-card">
-            <h3 id="m-title" style="margin-top:0; color:var(--aims-blue);"></h3>
+            <h3 id="m-title" style="margin-top:0; color:var(--tup-red);"></h3>
             <div id="step-inputs">
                 <div class="input-group"><label>Raw Score:</label><input type="number" id="m-raw"></div>
                 <div class="input-group"><label>Total Score:</label><input type="number" id="m-tot"></div>
-                <button class="btn-prime" onclick="processStep()">Next Step (Enter)</button>
+                <button class="btn-prime" onclick="processStep()">NEXT STEP (Enter)</button>
             </div>
             <div id="step-confirm" class="hidden" style="text-align:center;">
                 <p><strong>Add another activity?</strong></p>
                 <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-                    <button class="btn-yn" style="background:#28a745" onclick="handleYN(true)">YES</button>
-                    <button class="btn-yn" style="background:#dc3545" onclick="handleYN(false)">NO</button>
+                    <button class="btn-yn" style="background:#38a169" onclick="handleYN(true)">YES</button>
+                    <button class="btn-yn" style="background:var(--tup-red)" onclick="handleYN(false)">NO</button>
                 </div>
             </div>
-            <button onclick="closeM()" style="margin-top:20px; background:none; border:none; color:#999; cursor:pointer; width:100%;">Cancel</button>
+            <button onclick="closeM()" style="margin-top:20px; background:none; border:none; color:#999; cursor:pointer; width:100%;">Cancel Entry</button>
         </div>
     </div>
 
@@ -75,40 +84,40 @@
         <nav class="sidebar">
             <div class="sidebar-header">TUPV REGISTRAR</div>
             <ul>
-                <li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Dashboard</li>
-                <li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Scores</li>
-                <li onclick="wipe()">🧹 Wipe System</li>
-                <li onclick="location.reload()" style="color:#ff9999">🔒 Logout</li>
+                <li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Overview Dash</li>
+                <li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Records</li>
+                <li onclick="wipe()" style="margin-top:50px;">🧹 Wipe System</li>
+                <li onclick="location.reload()" style="color:#ffaaaa">🔒 Logout</li>
             </ul>
         </nav>
 
         <main class="content">
             <div id="view-dash">
                 <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h1>Overview</h1>
-                    <input type="text" class="search-box" id="search-dash" placeholder="Search..." onkeyup="render()" style="padding:10px; border-radius:4px; border:1px solid #ccc;">
+                    <h2>Academic Overview</h2>
+                    <input type="text" id="search-dash" placeholder="Search student name..." onkeyup="render()" style="padding:10px; border-radius:4px; border:1px solid #ddd; width:250px;">
                 </header>
                 <div class="card">
-                    <h3>Enroll New Student</h3>
+                    <h3 style="margin-top:0;">Enroll New Student</h3>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="nName" placeholder="Full Name" style="padding:10px; flex:2;">
-                        <input type="number" id="nAge" placeholder="Age" style="padding:10px; flex:0.5;">
-                        <button class="btn-prime" style="flex:1" onclick="addS()">Enroll Student</button>
+                        <input type="text" id="nName" placeholder="Full Name" style="padding:12px; flex:2; border:1px solid #ddd; border-radius:4px;">
+                        <input type="number" id="nAge" placeholder="Age" style="padding:12px; flex:0.5; border:1px solid #ddd; border-radius:4px;">
+                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL (Enter)</button>
                     </div>
                 </div>
                 <div class="card">
                     <table id="table-dash">
-                        <thead><tr><th>Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Average</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Name</th><th>P (30%)</th><th>M (30%)</th><th>E (40%)</th><th>Average</th><th>Target Prediction</th></tr></thead>
                         <tbody id="dash-list"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="view-edit" class="hidden">
-                <header style="margin-bottom:20px;"><h1>Manage & Edit Scores</h1></header>
+                <header style="margin-bottom:20px;"><h2>Score Management</h2></header>
                 <div class="card">
                     <table>
-                        <thead><tr><th>Student Name</th><th>Prelim Action</th><th>Midterm Action</th><th>Endterm Action</th><th>Remove</th></tr></thead>
+                        <thead><tr><th>Student Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Remove</th></tr></thead>
                         <tbody id="edit-list"></tbody>
                     </table>
                 </div>
@@ -117,7 +126,7 @@
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('tupv_v4')) || [];
+        let db = JSON.parse(localStorage.getItem('tupv_v5_red')) || [];
         let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [] };
 
         function handleGlobalEnter(e) {
@@ -126,9 +135,7 @@
                 else if (!document.getElementById('score-modal').classList.contains('hidden')) {
                     if (document.getElementById('step-inputs').classList.contains('hidden')) return;
                     processStep();
-                } else if (document.activeElement.id === 'nName' || document.activeElement.id === 'nAge') {
-                    addS();
-                }
+                } else if (document.activeElement.id === 'nName' || document.activeElement.id === 'nAge') addS();
             }
         }
 
@@ -137,7 +144,7 @@
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 render();
-            } else { alert("Invalid Credentials"); }
+            } else { alert("ACCESS DENIED"); }
         }
 
         function switchTab(tab) {
@@ -202,24 +209,35 @@
 
             db.forEach((s, i) => {
                 if (!s.name.toLowerCase().includes(q)) return;
-                let stat = s.endterm === -1 ? "INC" : (s.avg >= 5.0 ? "PASS" : "FAIL");
                 
-                // Dashboard Row
+                // C++ Logic Prediction
+                let predict = "";
+                let curPoints = (s.prelim !== -1 ? s.prelim * 0.3 : 0) + (s.midterm !== -1 ? s.midterm * 0.3 : 0) + (s.endterm !== -1 ? s.endterm * 0.4 : 0);
+                let weightLeft = (s.prelim === -1 ? 0.3 : 0) + (s.midterm === -1 ? 0.3 : 0) + (s.endterm === -1 ? 0.4 : 0);
+                
+                if (weightLeft === 0) {
+                    predict = s.avg >= 5.0 ? '<span class="status-badge safe">PASSED</span>' : '<span class="status-badge crit">FAILED</span>';
+                } else {
+                    let needed = (5.0 - curPoints) / weightLeft;
+                    if (needed > 10) predict = '<span class="status-badge crit">CRITICAL</span>';
+                    else if (needed <= 1) predict = '<span class="status-badge safe">SAFE</span>';
+                    else predict = `<span class="status-badge need">Need ${needed.toFixed(2)} Avg</span>`;
+                }
+
                 dList.innerHTML += `<tr>
                     <td><b>${s.name.toUpperCase()}</b></td>
                     <td>${s.prelim === -1 ? '-' : s.prelim.toFixed(2)}</td>
                     <td>${s.midterm === -1 ? '-' : s.midterm.toFixed(2)}</td>
                     <td>${s.endterm === -1 ? '-' : s.endterm.toFixed(2)}</td>
                     <td><b>${s.avg.toFixed(2)}</b></td>
-                    <td style="color:${stat==='PASS'?'green':'red'}"><b>${stat}</b></td>
+                    <td>${predict}</td>
                 </tr>`;
 
-                // Edit Row
                 eList.innerHTML += `<tr>
                     <td><b>${s.name.toUpperCase()}</b></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'prelim')">MODIFY PRELIM</button></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'midterm')">MODIFY MIDTERM</button></td>
-                    <td><button class="btn-modify" onclick="openP(${i},'endterm')">MODIFY ENDTERM</button></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'prelim')">EDIT P</button></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'midterm')">EDIT M</button></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'endterm')">EDIT E</button></td>
                     <td><button onclick="del(${i})" style="border:none; background:none; cursor:pointer;">🗑️</button></td>
                 </tr>`;
             });
@@ -231,7 +249,7 @@
         }
 
         function del(i) { if(confirm("Delete student?")) { db.splice(i,1); save(); } }
-        function save() { localStorage.setItem('tupv_v4', JSON.stringify(db)); render(); }
+        function save() { localStorage.setItem('tupv_v5_red', JSON.stringify(db)); render(); }
         function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
         function wipe() { if(confirm("Wipe all records?")) { db = []; save(); } }
     </script>
