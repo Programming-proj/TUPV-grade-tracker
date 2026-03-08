@@ -1,342 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TUPV AIMS</title>
-
-<style>
-:root{
---tup-red:#800000;
---tup-dark:#600000;
---bg:#f8f0f0;
-}
-
-body{
-font-family:'Segoe UI',sans-serif;
-margin:0;
-background:var(--bg);
-}
-
-.hidden{display:none!important;}
-
-.sidebar{
-width:240px;
-height:100vh;
-background:var(--tup-red);
-color:white;
-position:fixed;
-}
-
-.sidebar-header{
-padding:25px;
-text-align:center;
-font-weight:bold;
-}
-
-.sidebar li{
-padding:15px 20px;
-cursor:pointer;
-list-style:none;
-}
-
-.sidebar li:hover,.sidebar li.active{
-background:var(--tup-dark);
-}
-
-.content{
-margin-left:240px;
-padding:30px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:8px;
-margin-bottom:20px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
-}
-
-.btn-prime{
-background:var(--tup-red);
-color:white;
-border:none;
-padding:10px;
-cursor:pointer;
-}
-
-.btn-sec{
-background:#eee;
-border:none;
-padding:6px 10px;
-cursor:pointer;
-}
-
-.gpa-good{color:green;font-weight:bold;}
-.gpa-mid{color:#d4a000;font-weight:bold;}
-.gpa-bad{color:red;font-weight:bold;}
-
-.modal-bg{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.8);
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.modal-card{
-background:white;
-padding:25px;
-width:400px;
-border-radius:8px;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUPV AIMS | Secure Access</title>
+    <style>
+        :root { --tup-red: #800000; --bg: #f8f0f0; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); }
+        .hidden { display: none !important; }
+        .overlay { position: fixed; inset: 0; background: var(--tup-red); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-prime:hover { background: #600000; }
+        #app { padding: 20px; }
+    </style>
 </head>
-
-<body onkeydown="handleGlobalEnter(event)">
-
-<div id="login-screen" style="position:fixed;inset:0;background:#800000;display:flex;justify-content:center;align-items:center;">
-<div style="background:white;padding:30px;border-radius:8px;text-align:center;">
-<h2>TUPV AIMS</h2>
-<input id="uIn" placeholder="Username"><br><br>
-<input id="pIn" type="password" placeholder="Password"><br><br>
-<button onclick="login()">LOGIN</button>
-</div>
-</div>
-
-<div id="score-modal" class="modal-bg hidden">
-<div class="modal-card">
-<h3 id="m-title"></h3>
-
-<div id="step-inputs">
-<input id="m-raw" type="number" placeholder="Raw Score"><br><br>
-<input id="m-tot" type="number" placeholder="Total Score"><br><br>
-<button onclick="processStep()">Next</button>
-</div>
-
-<div id="step-confirm" class="hidden">
-<p>Add another activity?</p>
-<button onclick="handleYN(true)">Yes</button>
-<button onclick="handleYN(false)">No</button>
-</div>
-
-<button onclick="closeM()">Cancel</button>
-
-</div>
-</div>
-
-<div id="app" class="hidden">
-
-<nav class="sidebar">
-<div class="sidebar-header">TUPV REGISTRAR</div>
-
-<ul>
-<li onclick="switchTab('dash')">Overview</li>
-<li onclick="switchTab('edit')">Manage Grades</li>
-</ul>
-
-</nav>
-
-<main class="content">
-
-<div id="view-dash">
-
-<h2>Students</h2>
-
-<input id="nName" placeholder="Name">
-<input id="nAge" type="number" placeholder="Age">
-<button onclick="addS()">Enroll</button>
-
-<table id="dash-list"></table>
-
-</div>
-
-<div id="view-edit" class="hidden">
-<h2>Edit Grades</h2>
-<table id="edit-list"></table>
-</div>
-
-</main>
-
-</div>
-
-<script>
-
-let config={
-Chemistry:{act:0.6,exam:0.4,att:0}
-};
-
-let db=[];
-let state={};
-
-function login(){
-
-let u=document.getElementById("uIn").value;
-let p=document.getElementById("pIn").value;
-
-if(u==="TUPV" && p==="MXE 1-A"){
-
-document.getElementById("login-screen").classList.add("hidden");
-document.getElementById("app").classList.remove("hidden");
-
-render();
-
-}
-
-}
-
-function addS(){
-
-let name=document.getElementById("nName").value;
-let age=document.getElementById("nAge").value;
-
-if(!name || !age)return;
-
-db.push({
-name:name,
-age:age,
-subject:"Chemistry",
-prelim:-1,
-midterm:-1,
-endterm:-1,
-avg:0
-});
-
-render();
-
-}
-
-function gradeColor(g){
-
-if(g<=1.75)return "gpa-good";
-if(g<=2.75)return "gpa-mid";
-return "gpa-bad";
-
-}
-
-function render(){
-
-let dash=document.getElementById("dash-list");
-let edit=document.getElementById("edit-list");
-
-let students=db.sort((a,b)=>a.avg-b.avg);
-
-let dHTML="<tr><th>#</th><th>Name</th><th>P</th><th>M</th><th>E</th><th>Avg</th></tr>";
-let eHTML="<tr><th>Name</th><th>P</th><th>M</th><th>E</th></tr>";
-
-students.forEach((s,i)=>{
-
-let p=s.prelim<0?"-":s.prelim.toFixed(2);
-let m=s.midterm<0?"-":s.midterm.toFixed(2);
-let e=s.endterm<0?"-":s.endterm.toFixed(2);
-
-dHTML+=`
-<tr>
-<td>${i+1}</td>
-<td>${s.name}</td>
-<td>${p}</td>
-<td>${m}</td>
-<td>${e}</td>
-<td class="${gradeColor(s.avg)}">${s.avg.toFixed(2)}</td>
-</tr>
-`;
-
-eHTML+=`
-<tr>
-<td>${s.name}</td>
-<td><button onclick="openP(${i},'prelim')">P</button></td>
-<td><button onclick="openP(${i},'midterm')">M</button></td>
-<td><button onclick="openP(${i},'endterm')">E</button></td>
-</tr>
-`;
-
-});
-
-dash.innerHTML=dHTML;
-edit.innerHTML=eHTML;
-
-}
-
-function openP(i,term){
-
-state={idx:i,term:term,mode:'exam'};
-
-document.getElementById("m-title").innerText=term;
-
-document.getElementById("score-modal").classList.remove("hidden");
-
-setTimeout(()=>{
-document.getElementById("m-raw").focus();
-},100);
-
-}
-
-function processStep(){
-
-let r=parseFloat(document.getElementById("m-raw").value);
-let t=parseFloat(document.getElementById("m-tot").value);
-
-if(isNaN(r)||isNaN(t))return;
-
-let grade=((r/t)*9)+1;
-
-db[state.idx][state.term]=grade;
-
-let s=db[state.idx];
-
-s.avg=
-((s.prelim<0?0:s.prelim)*0.3)+
-((s.midterm<0?0:s.midterm)*0.3)+
-((s.endterm<0?0:s.endterm)*0.4);
-
-closeM();
-render();
-
-}
-
-function closeM(){
-
-document.getElementById("score-modal").classList.add("hidden");
-
-}
-
-function handleYN(){}
-
-function switchTab(tab){
-
-document.getElementById("view-dash").classList.add("hidden");
-document.getElementById("view-edit").classList.add("hidden");
-
-document.getElementById("view-"+tab).classList.remove("hidden");
-
-}
-
-function handleGlobalEnter(e){
-
-if(e.key==="Enter"){
-
-if(!document.getElementById("login-screen").classList.contains("hidden"))
-login();
-
-else if(!document.getElementById("score-modal").classList.contains("hidden"))
-processStep();
-
-}
-
-}
-
-</script>
-
+<body>
+
+    <div id="login-screen" class="overlay">
+        <div class="login-box">
+            <h2 style="color:var(--tup-red); margin-top:0;">TUPV AIMS</h2>
+            <p style="font-size: 0.8rem; color: #666;">Enter Credentials</p>
+            <input type="text" id="uIn" placeholder="Username (TUPV)">
+            <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
+            <button type="button" class="btn-prime" onclick="handleLoginAttempt()">LOGIN</button>
+            <p id="err-msg" style="color: red; font-size: 0.8rem; margin-top: 10px;" class="hidden">Invalid Credentials</p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <h1 style="color:var(--tup-red)">Welcome to AIMS Portal</h1>
+        <p>If you see this, the login worked!</p>
+        <button class="btn-prime" style="width: 200px;" onclick="location.reload()">LOGOUT</button>
+        <hr>
+        <div id="main-content">
+            <p>Ready to manage records.</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Connection Check: This runs as soon as the page loads
+        console.log("System Online: Ready for login.");
+
+        function handleLoginAttempt() {
+            console.log("Login button clicked!"); // If you don't see this in F12 console, the button is broken.
+
+            const userField = document.getElementById('uIn');
+            const passField = document.getElementById('pIn');
+            const errMsg = document.getElementById('err-msg');
+
+            const username = userField.value.trim().toUpperCase();
+            const password = passField.value.trim().toUpperCase();
+
+            // Simplified check
+            if (username === "TUPV" && password === "MXE 1-A") {
+                console.log("Access Granted");
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            } else {
+                console.log("Access Denied");
+                errMsg.classList.remove('hidden');
+                userField.style.borderColor = "red";
+                passField.style.borderColor = "red";
+            }
+        }
+
+        // Support for "Enter" key
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                handleLoginAttempt();
+            }
+        });
+    </script>
 </body>
 </html>
