@@ -1,278 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Semester Master</title>
-    <style>
-        :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
-        .hidden { display: none !important; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUPV AIMS | Semester Master</title>
 
-        /* Sidebar & Layout */
-        .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
-        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
-        .sidebar li:hover, .sidebar li.active { background: var(--tup-dark); border-left: 5px solid #ff0000; }
-        .content { margin-left: 240px; padding: 30px; }
+<style>
+:root{
+--tup-red:#800000;
+--tup-dark:#600000;
+--bg:#f8f0f0;
+}
 
-        /* Cards & UI */
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
-        .dna-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #eee; font-size: 0.75rem; margin-right: 5px; font-weight: bold; color: var(--tup-red); }
-        
-        /* Modals */
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); max-height: 80vh; overflow-y: auto; }
-        
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-        th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); font-size: 0.8rem; color: var(--tup-red); }
-        td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+body{
+font-family:'Segoe UI',sans-serif;
+margin:0;
+background:var(--bg);
+color:#333;
+}
 
-        .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-    </style>
+.hidden{display:none!important;}
+
+.sidebar{
+width:240px;
+height:100vh;
+background:var(--tup-red);
+color:white;
+position:fixed;
+box-shadow:2px 0 10px rgba(0,0,0,0.2);
+}
+
+.sidebar-header{
+padding:25px;
+text-align:center;
+font-weight:bold;
+border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+.sidebar li{
+padding:15px 20px;
+cursor:pointer;
+list-style:none;
+border-bottom:1px solid rgba(255,255,255,0.05);
+transition:0.2s;
+}
+
+.sidebar li:hover,.sidebar li.active{
+background:var(--tup-dark);
+border-left:5px solid #ff0000;
+}
+
+.content{
+margin-left:240px;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 4px 12px rgba(128,0,0,0.1);
+margin-bottom:20px;
+border-left:4px solid var(--tup-red);
+}
+
+.dna-pill{
+display:inline-block;
+padding:4px 12px;
+border-radius:20px;
+background:#eee;
+font-size:0.75rem;
+margin-right:5px;
+font-weight:bold;
+color:var(--tup-red);
+}
+
+.gpa-good{color:green;font-weight:bold;}
+.gpa-mid{color:#d4a000;font-weight:bold;}
+.gpa-bad{color:red;font-weight:bold;}
+
+.modal-bg{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.85);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.modal-card{
+background:white;
+padding:30px;
+border-radius:8px;
+width:450px;
+border-top:8px solid var(--tup-red);
+max-height:80vh;
+overflow-y:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:8px;
+overflow:hidden;
+margin-top:10px;
+}
+
+th{
+text-align:left;
+background:#fff5f5;
+padding:12px;
+border-bottom:2px solid var(--tup-red);
+font-size:0.8rem;
+color:var(--tup-red);
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #f0f0f0;
+}
+
+.btn-prime{
+background:var(--tup-red);
+color:white;
+border:none;
+padding:12px;
+border-radius:4px;
+cursor:pointer;
+font-weight:bold;
+width:100%;
+}
+
+.btn-sec{
+background:#eee;
+color:#333;
+border:none;
+padding:8px 15px;
+border-radius:4px;
+cursor:pointer;
+font-size:0.8rem;
+}
+
+input,select{
+padding:10px;
+border:1px solid #ddd;
+border-radius:4px;
+}
+</style>
 </head>
+
 <body onkeydown="handleGlobalEnter(event)">
 
-    <div id="login-screen" class="overlay" style="position:fixed; inset:0; background:var(--tup-red); z-index:2000; display:flex; justify-content:center; align-items:center;">
-        <div style="background:white; padding:40px; border-radius:8px; text-align:center; width:300px;">
-            <h2 style="color:var(--tup-red)">TUPV AIMS</h2>
-            <input type="text" id="uIn" placeholder="Username" style="width:100%; margin-bottom:10px;">
-            <input type="password" id="pIn" placeholder="Password" style="width:100%; margin-bottom:15px;">
-            <button class="btn-prime" onclick="login()">LOGIN (Enter)</button>
-        </div>
-    </div>
+<div id="login-screen" style="position:fixed;inset:0;background:var(--tup-red);z-index:2000;display:flex;justify-content:center;align-items:center;">
+<div style="background:white;padding:40px;border-radius:8px;text-align:center;width:300px;">
+<h2 style="color:var(--tup-red)">TUPV AIMS</h2>
+<input id="uIn" placeholder="Username" style="width:100%;margin-bottom:10px;">
+<input id="pIn" type="password" placeholder="Password" style="width:100%;margin-bottom:15px;">
+<button class="btn-prime" onclick="login()">LOGIN</button>
+</div>
+</div>
 
-    <div id="score-modal" class="modal-bg hidden">
-        <div class="modal-card">
-            <h3 id="m-title" style="color:var(--tup-red)"></h3>
-            <div id="step-inputs">
-                <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; margin-bottom:10px;">
-                <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; margin-bottom:10px;">
-                <button class="btn-prime" onclick="processStep()">Next Step (Enter)</button>
-            </div>
-            <div id="step-confirm" class="hidden" style="text-align:center;">
-                <p>Add another activity?</p>
-                <button class="btn-sec" onclick="handleYN(true)">YES</button>
-                <button class="btn-sec" onclick="handleYN(false)">NO</button>
-            </div>
-            <button onclick="closeM()" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
+<div id="score-modal" class="modal-bg hidden">
+<div class="modal-card">
 
-    <div id="app" class="hidden">
-        <nav class="sidebar">
-            <div class="sidebar-header">TUPV REGISTRAR</div>
-            <ul>
-                <li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Overview Dash</li>
-                <li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Records</li>
-                <li id="nav-sys" onclick="switchTab('sys')">⚙️ System Tools</li>
-                <li onclick="location.reload()" style="color:#ffaaaa; margin-top:20px;">🔒 Logout</li>
-            </ul>
-        </nav>
+<h3 id="m-title" style="color:var(--tup-red)"></h3>
 
-        <main class="content">
-            <div id="view-dash">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
-                    <div>
-                        <h2 style="margin:0">Academic Overview</h2>
-                        <div id="dna-container" style="margin-top:5px;"></div>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="search-input" placeholder="Search student..." onkeyup="render()">
-                        <select id="sub-sel" onchange="render()"></select>
-                    </div>
-                </div>
+<div id="step-inputs">
+<input type="number" id="m-raw" placeholder="Raw Score" style="width:100%;margin-bottom:10px;">
+<input type="number" id="m-tot" placeholder="Total Score" style="width:100%;margin-bottom:10px;">
+<button class="btn-prime" onclick="processStep()">Next</button>
+</div>
 
-                <div class="card">
-                    <h3 style="margin-top:0;">Enroll New Student</h3>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="nName" placeholder="Full Name" style="flex:2;">
-                        <input type="number" id="nAge" placeholder="Age" style="flex:0.5;">
-                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL</button>
-                    </div>
-                </div>
-                <div class="card"><table id="dash-list"></table></div>
-            </div>
+<div id="step-confirm" class="hidden" style="text-align:center;">
+<p>Add another activity?</p>
+<button class="btn-sec" onclick="handleYN(true)">YES</button>
+<button class="btn-sec" onclick="handleYN(false)">NO</button>
+</div>
 
-            <div id="view-edit" class="hidden">
-                <h2>Manage Grades</h2>
-                <div class="card"><table id="edit-list"></table></div>
-            </div>
+<button onclick="closeM()" style="width:100%;background:none;border:none;color:#999;margin-top:15px;">Cancel</button>
 
-            <div id="view-sys" class="hidden">
-                <h2>System Settings</h2>
-                
-                <div class="card">
-                    <h3>Subject Manager</h3>
-                    <p style="font-size:0.8rem; color:#666;">Add new subjects for next semester here. Ensure percentages sum to 1.0 (e.g., 0.5 + 0.5).</p>
-                    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:5px; margin-bottom:10px;">
-                        <input type="text" id="sj-name" placeholder="Subject Name">
-                        <input type="number" id="sj-act" placeholder="Act %" step="0.1">
-                        <input type="number" id="sj-exm" placeholder="Exam %" step="0.1">
-                        <input type="number" id="sj-att" placeholder="Att %" step="0.1">
-                        <button class="btn-prime" onclick="addSubject()">ADD</button>
-                    </div>
-                    <table id="sj-table"></table>
-                </div>
+</div>
+</div>
 
-                <div class="card">
-                    <h3>Data Backup</h3>
-                    <textarea id="backup-str" style="width:100%; height:60px; font-family:monospace; margin-bottom:10px;"></textarea>
-                    <button class="btn-sec" onclick="generateBackup()">Generate</button>
-                    <button class="btn-sec" onclick="restoreBackup()">Restore</button>
-                </div>
-                <button class="btn-sec" style="background:#cc0000; color:white;" onclick="wipe()">WIPE ALL DATA</button>
-            </div>
-        </main>
-    </div>
+<div id="app" class="hidden">
 
-    <script>
-        // Default Config if empty
-        let config = JSON.parse(localStorage.getItem('tupv_config')) || {
-            "Chemistry": { act: 0.6, exam: 0.4, att: 0 },
-            "Programming": { act: 0.5, exam: 0.4, att: 0.1 }
-        };
-        let db = JSON.parse(localStorage.getItem('tupv_v10_final')) || [];
-        let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [], attScore: 0 };
+<nav class="sidebar">
+<div class="sidebar-header">TUPV REGISTRAR</div>
 
-        function login() {
-            if(document.getElementById('uIn').value==="TUPV" && document.getElementById('pIn').value==="MXE 1-A") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-                updateSubjectDropdown();
-                render();
-            }
-        }
+<ul>
+<li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Overview Dash</li>
+<li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Records</li>
+<li id="nav-sys" onclick="switchTab('sys')">⚙️ System Tools</li>
+<li onclick="location.reload()" style="color:#ffaaaa;margin-top:20px;">🔒 Logout</li>
+</ul>
+</nav>
 
-        function switchTab(tab) {
-            ['dash', 'edit', 'sys'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
-            document.getElementById('view-'+tab).classList.remove('hidden');
-            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
-            document.getElementById('nav-'+tab).classList.add('active');
-            render();
-        }
+<main class="content">
 
-        function updateSubjectDropdown() {
-            const sel = document.getElementById('sub-sel');
-            const currentVal = sel.value;
-            sel.innerHTML = Object.keys(config).map(k => `<option value="${k}" ${k===currentVal?'selected':''}>${k}</option>`).join('');
-        }
+<div id="view-dash">
 
-        function addSubject() {
-            const name = document.getElementById('sj-name').value.trim();
-            const act = parseFloat(document.getElementById('sj-act').value) || 0;
-            const exm = parseFloat(document.getElementById('sj-exm').value) || 0;
-            const att = parseFloat(document.getElementById('sj-att').value) || 0;
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+<div>
+<h2 style="margin:0">Academic Overview</h2>
+<div id="dna-container"></div>
+</div>
 
-            if(!name || (act + exm + att) !== 1) return alert("Total percentages must equal 1.0 (100%)");
-            
-            config[name] = { act, exam: exm, att };
-            localStorage.setItem('tupv_config', JSON.stringify(config));
-            updateSubjectDropdown();
-            render();
-            alert("Subject Added! Note: Existing students must be re-enrolled to see new subjects.");
-        }
+<div style="display:flex;gap:10px;">
+<input id="search-input" placeholder="Search student..." onkeyup="render()">
+<select id="sub-sel" onchange="render()"></select>
+<button class="btn-sec" onclick="exportCSV()">Export CSV</button>
+</div>
+</div>
 
-        function delSubject(name) {
-            if(confirm(`Delete ${name}?`)) {
-                delete config[name];
-                db = db.filter(s => s.subject !== name);
-                localStorage.setItem('tupv_config', JSON.stringify(config));
-                updateSubjectDropdown();
-                save();
-            }
-        }
+<div class="card">
 
-        function addS() {
-            const n = document.getElementById('nName').value.trim();
-            const a = document.getElementById('nAge').value.trim();
-            if(!n || !a) return;
-            if(db.some(s => s.name.toLowerCase() === n.toLowerCase())) return alert("Already exists!");
+<h3>Enroll New Student</h3>
 
-            Object.keys(config).forEach(subKey => {
-                db.push({ name: n, age: a, subject: subKey, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
-            });
-            document.getElementById('nName').value = ''; document.getElementById('nAge').value = '';
-            save();
-        }
+<div style="display:flex;gap:10px;">
+<input id="nName" placeholder="Full Name" style="flex:2;">
+<input id="nAge" type="number" placeholder="Age" style="flex:0.5;">
+<button class="btn-prime" style="flex:1" onclick="addS()">ENROLL</button>
+</div>
 
-        function render() {
-            const currentSub = document.getElementById('sub-sel').value;
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const cfg = config[currentSub] || {act:0, exam:0, att:0};
-            
-            // Render DNA
-            document.getElementById('dna-container').innerHTML = `<span class="dna-pill">Act: ${cfg.act*100}%</span><span class="dna-pill">Exam: ${cfg.exam*100}%</span>${cfg.att > 0 ? `<span class="dna-pill">Att: ${cfg.att*100}%</span>` : ''}`;
+</div>
 
-            // Render Tables
-            let dHTML = `<tr><th>Name</th><th>P</th><th>M</th><th>E</th><th>Avg</th></tr>`;
-            let eHTML = `<tr><th>Name</th><th>Edit P</th><th>Edit M</th><th>Edit E</th><th>Del</th></tr>`;
+<div class="card">
+<table id="dash-list"></table>
+</div>
 
-            db.filter(s => s.subject === currentSub && s.name.toLowerCase().includes(searchTerm)).forEach(s => {
-                const i = db.indexOf(s);
-                dHTML += `<tr><td><b>${s.name.toUpperCase()}</b></td><td>${s.prelim.toFixed(2)}</td><td>${s.midterm.toFixed(2)}</td><td>${s.endterm.toFixed(2)}</td><td><b>${s.avg.toFixed(2)}</b></td></tr>`;
-                eHTML += `<tr><td><b>${s.name.toUpperCase()}</b></td><td><button class="btn-sec" onclick="openP(${i},'prelim')">P</button></td><td><button class="btn-sec" onclick="openP(${i},'midterm')">M</button></td><td><button class="btn-sec" onclick="openP(${i},'endterm')">E</button></td><td><button onclick="delStudent('${s.name}')">🗑️</button></td></tr>`;
-            });
-            document.getElementById('dash-list').innerHTML = dHTML;
-            document.getElementById('edit-list').innerHTML = eHTML;
+</div>
 
-            // Render Subject List in System
-            document.getElementById('sj-table').innerHTML = `<tr><th>Subject</th><th>Setup</th><th>Action</th></tr>` + 
-                Object.keys(config).map(k => `<tr><td>${k}</td><td>${config[k].act*100}/${config[k].exam*100}/${config[k].att*100}</td><td><button onclick="delSubject('${k}')">❌</button></td></tr>`).join('');
-        }
+<div id="view-edit" class="hidden">
+<h2>Manage Grades</h2>
+<div class="card"><table id="edit-list"></table></div>
+</div>
 
-        function openP(i, term) {
-            state = { idx: i, term: term, mode: 'weekly', weeklyData: [], attScore: 0 };
-            showStep();
-            document.getElementById('score-modal').classList.remove('hidden');
-        }
+<div id="view-sys" class="hidden">
 
-        function showStep() {
-            document.getElementById('step-inputs').classList.remove('hidden');
-            document.getElementById('step-confirm').classList.add('hidden');
-            let label = state.mode==='weekly' ? `Activity #${state.weeklyData.length+1}` : (state.mode==='exam' ? 'Major Exam' : 'Attendance');
-            document.getElementById('m-title').innerText = `${state.term.toUpperCase()}: ${label}`;
-            document.getElementById('m-raw').value = ''; document.getElementById('m-tot').value = '';
-            document.getElementById('m-raw').focus();
-        }
+<h2>System Settings</h2>
 
-        function processStep() {
-            const r = parseFloat(document.getElementById('m-raw').value);
-            const t = parseFloat(document.getElementById('m-tot').value);
-            if(isNaN(r) || isNaN(t)) return;
-            const scaled = ((r/t)*9)+1;
+<div class="card">
 
-            if(state.mode==='weekly') {
-                state.weeklyData.push(scaled);
-                document.getElementById('step-inputs').classList.add('hidden');
-                document.getElementById('step-confirm').classList.remove('hidden');
-            } else if(state.mode==='exam') {
-                state.examScore = scaled;
-                if(config[db[state.idx].subject].att > 0) { state.mode='att'; showStep(); }
-                else finalize();
-            } else { state.attScore = scaled; finalize(); }
-        }
+<h3>Subject Manager</h3>
 
-        function handleYN(yes) { if(yes) showStep(); else { state.mode='exam'; showStep(); } }
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px;">
+<input id="sj-name" placeholder="Subject Name">
+<input id="sj-act" type="number" step="0.1" placeholder="Act %">
+<input id="sj-exm" type="number" step="0.1" placeholder="Exam %">
+<input id="sj-att" type="number" step="0.1" placeholder="Att %">
+<button class="btn-prime" onclick="addSubject()">ADD</button>
+</div>
 
-        function finalize() {
-            const cfg = config[db[state.idx].subject];
-            const wAvg = state.weeklyData.reduce((a,b)=>a+b,0)/state.weeklyData.length;
-            db[state.idx][state.term.toLowerCase()] = (wAvg * cfg.act) + (state.examScore * cfg.exam) + (state.attScore * (cfg.att||0));
-            let s = db[state.idx];
-            s.avg = ((s.prelim===-1?0:s.prelim)*0.3)+((s.midterm===-1?0:s.midterm)*0.3)+((s.endterm===-1?0:s.endterm)*0.4);
-            save(); closeM();
-        }
+<table id="sj-table"></table>
 
-        function handleGlobalEnter(e) { if(e.key === 'Enter') { if(!document.getElementById('login-screen').classList.contains('hidden')) login(); else if(!document.getElementById('score-modal').classList.contains('hidden')) processStep(); } }
-        function delStudent(name) { if(confirm("Delete from ALL subjects?")) { db = db.filter(s => s.name.toLowerCase() !== name.toLowerCase()); save(); } }
-        function save() { localStorage.setItem('tupv_v10_final', JSON.stringify(db)); render(); }
-        function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
-        function generateBackup() { document.getElementById('backup-str').value = btoa(JSON.stringify({db, config})); }
-        function restoreBackup() { try { const data = JSON.parse(atob(document.getElementById('backup-str').value)); db = data.db; config = data.config; localStorage.setItem('tupv_config', JSON.stringify(config)); save(); updateSubjectDropdown(); } catch(e) { alert("Invalid data"); } }
-        function wipe() { if(confirm("WIPE?")) { db = []; save(); } }
-    </script>
+</div>
+
+</div>
+
+</main>
+</div>
+
+<script>
+
+let config = JSON.parse(localStorage.getItem('tupv_config')) || {
+Chemistry:{act:0.6,exam:0.4,att:0},
+Programming:{act:0.5,exam:0.4,att:0.1}
+};
+
+let db = JSON.parse(localStorage.getItem('tupv_db')) || [];
+
+let state={idx:-1,term:'',mode:'weekly',weeklyData:[],attScore:0};
+
+function login(){
+if(uIn.value==="TUPV" && pIn.value==="MXE 1-A"){
+login-screen.classList.add('hidden');
+app.classList.remove('hidden');
+updateSubjectDropdown();
+render();
+}
+}
+
+function switchTab(tab){
+['dash','edit','sys'].forEach(v=>document.getElementById('view-'+v).classList.add('hidden'));
+document.getElementById('view-'+tab).classList.remove('hidden');
+document.querySelectorAll('.sidebar li').forEach(li=>li.classList.remove('active'));
+document.getElementById('nav-'+tab).classList.add('active');
+render();
+}
+
+function updateSubjectDropdown(){
+const sel=document.getElementById('sub-sel');
+const current=sel.value;
+sel.innerHTML=Object.keys(config).map(k=>`<option ${k===current?'selected':''}>${k}</option>`).join('');
+}
+
+function addSubject(){
+
+const name=sj-name.value.trim();
+const act=parseFloat(sj-act.value)||0;
+const exm=parseFloat(sj-exm.value)||0;
+const att=parseFloat(sj-att.value)||0;
+
+if(!name || Math.abs((act+exm+att)-1)>0.001){
+alert("Percentages must total 1.0");
+return;
+}
+
+config[name]={act,exam:exm,att};
+localStorage.setItem('tupv_config',JSON.stringify(config));
+
+updateSubjectDropdown();
+render();
+
+}
+
+function addS(){
+
+const n=nName.value.trim();
+const a=nAge.value.trim();
+
+if(!n||!a)return;
+
+if(db.some(s=>s.name.toLowerCase()===n.toLowerCase()))
+return alert("Already exists");
+
+Object.keys(config).forEach(sub=>{
+db.push({
+name:n,
+age:a,
+subject:sub,
+prelim:-1,
+midterm:-1,
+endterm:-1,
+avg:0
+});
+});
+
+nName.value='';
+nAge.value='';
+
+save();
+
+}
+
+function gradeColor(g){
+
+if(g<=1.75)return "gpa-good";
+if(g<=2.75)return "gpa-mid";
+return "gpa-bad";
+
+}
+
+function render(){
+
+const currentSub=sub-sel.value;
+const search=search-input.value.toLowerCase();
+const cfg=config[currentSub]||{act:0,exam:0,att:0};
+
+dna-container.innerHTML=`
+<span class="dna-pill">Act:${cfg.act*100}%</span>
+<span class="dna-pill">Exam:${cfg.exam*100}%</span>
+${cfg.att>0?`<span class="dna-pill">Att:${cfg.att*100}%</span>`:''}
+`;
+
+let students=db
+.filter(s=>s.subject===currentSub && s.name.toLowerCase().includes(search))
+.sort((a,b)=>a.avg-b.avg);
+
+let dHTML=`<tr><th>#</th><th>Name</th><th>P</th><th>M</th><th>E</th><th>Avg</th></tr>`;
+let eHTML=`<tr><th>Name</th><th>P</th><th>M</th><th>E</th><th>Del</th></tr>`;
+
+students.forEach((s,rank)=>{
+
+const i=db.indexOf(s);
+
+const p=s.prelim<0?"-":s.prelim.toFixed(2);
+const m=s.midterm<0?"-":s.midterm.toFixed(2);
+const e=s.endterm<0?"-":s.endterm.toFixed(2);
+
+dHTML+=`
+<tr>
+<td>${rank+1}</td>
+<td><b>${s.name.toUpperCase()}</b></td>
+<td>${p}</td>
+<td>${m}</td>
+<td>${e}</td>
+<td class="${gradeColor(s.avg)}">${s.avg.toFixed(2)}</td>
+</tr>
+`;
+
+eHTML+=`
+<tr>
+<td>${s.name}</td>
+<td><button class="btn-sec" onclick="openP(${i},'prelim')">P</button></td>
+<td><button class="btn-sec" onclick="openP(${i},'midterm')">M</button></td>
+<td><button class="btn-sec" onclick="openP(${i},'endterm')">E</button></td>
+<td><button onclick="delStudent('${s.name}')">🗑️</button></td>
+</tr>
+`;
+
+});
+
+dash-list.innerHTML=dHTML;
+edit-list.innerHTML=eHTML;
+
+}
+
+function openP(i,term){
+state={idx:i,term,mode:'weekly',weeklyData:[],attScore:0};
+showStep();
+score-modal.classList.remove('hidden');
+setTimeout(()=>m-raw.focus(),100);
+}
+
+function showStep(){
+
+step-inputs.classList.remove('hidden');
+step-confirm.classList.add('hidden');
+
+let label=
+state.mode==='weekly'
+?`Activity #${state.weeklyData.length+1}`
+:(state.mode==='exam'?'Major Exam':'Attendance');
+
+m-title.innerText=`${state.term.toUpperCase()}: ${label}`;
+
+m-raw.value='';
+m-tot.value='';
+
+}
+
+function processStep(){
+
+const r=parseFloat(m-raw.value);
+const t=parseFloat(m-tot.value);
+
+if(isNaN(r)||isNaN(t))return;
+
+const scaled=((r/t)*9)+1;
+
+if(state.mode==='weekly'){
+state.weeklyData.push(scaled);
+step-inputs.classList.add('hidden');
+step-confirm.classList.remove('hidden');
+}
+
+else if(state.mode==='exam'){
+state.examScore=scaled;
+if(config[db[state.idx].subject].att>0){
+state.mode='att';
+showStep();
+}else finalize();
+}
+
+else{
+state.attScore=scaled;
+finalize();
+}
+
+}
+
+function handleYN(yes){
+if(yes)showStep();
+else{
+state.mode='exam';
+showStep();
+}
+}
+
+function finalize(){
+
+const cfg=config[db[state.idx].subject];
+
+const wAvg=
+state.weeklyData.length
+?state.weeklyData.reduce((a,b)=>a+b)/state.weeklyData.length
+:0;
+
+db[state.idx][state.term]=
+(wAvg*cfg.act)+(state.examScore*cfg.exam)+(state.attScore*(cfg.att||0));
+
+let s=db[state.idx];
+
+s.avg=
+((s.prelim<0?0:s.prelim)*0.3)+
+((s.midterm<0?0:s.midterm)*0.3)+
+((s.endterm<0?0:s.endterm)*0.4);
+
+save();
+closeM();
+
+}
+
+function exportCSV(){
+
+let rows=["Name,Subject,Prelim,Midterm,Endterm,Average"];
+
+db.forEach(s=>{
+rows.push(`${s.name},${s.subject},${s.prelim},${s.midterm},${s.endterm},${s.avg}`);
+});
+
+let blob=new Blob([rows.join("\n")],{type:"text/csv"});
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+a.download="grades.csv";
+a.click();
+
+}
+
+function delStudent(name){
+
+if(confirm("Delete from ALL subjects?")){
+db=db.filter(s=>s.name.toLowerCase()!=name.toLowerCase());
+save();
+}
+
+}
+
+function save(){
+localStorage.setItem('tupv_db',JSON.stringify(db));
+render();
+}
+
+function closeM(){
+score-modal.classList.add('hidden');
+}
+
+function handleGlobalEnter(e){
+if(e.key==='Enter'){
+if(!login-screen.classList.contains('hidden'))login();
+else if(!score-modal.classList.contains('hidden'))processStep();
+}
+}
+
+</script>
+
 </body>
 </html>
