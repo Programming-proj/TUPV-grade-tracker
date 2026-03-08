@@ -3,226 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV Grade Tracker | AIMS Portal Master</title>
+    <title>TUPV AIMS | Master Portal</title>
     <style>
-        :root { --tup-red: #800000; --aims-blue: #1a3a5f; --aims-light: #2c5282; --bg-grey: #f4f7f9; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; margin: 0; background-color: var(--bg-grey); color: #333; }
+        :root { --aims-blue: #1a3a5f; --aims-light: #2c5282; --bg: #f0f2f5; --tup-red: #800000; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
         .hidden { display: none !important; }
 
-        /* --- LOGIN SCREEN --- */
+        /* Login */
         .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--aims-blue), #000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; }
         .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .login-box button { width: 100%; padding: 12px; background: var(--aims-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- SCORING PANEL (The Terminal Panel) --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
-        .step-box { border-left: 4px solid var(--aims-blue); padding-left: 15px; margin: 20px 0; }
-        .btn-yes { background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-no { background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* Sidebar */
+        .sidebar { width: 240px; height: 100vh; background: var(--aims-blue); color: white; position: fixed; }
+        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+        .sidebar li:hover, .sidebar li.active { background: var(--aims-light); border-left: 4px solid #fff; }
 
-        /* --- LAYOUT --- */
-        .sidebar { width: 250px; height: 100vh; background: var(--aims-blue); color: white; position: fixed; }
-        .sidebar-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar ul { list-style: none; padding: 0; }
-        .sidebar li { padding: 15px 25px; cursor: pointer; transition: 0.3s; }
-        .sidebar li:hover { background: var(--aims-light); }
-        .main-content { margin-left: 250px; padding: 40px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: #edf2f7; padding: 12px; text-align: left; }
+        /* Main */
+        .content { margin-left: 240px; padding: 40px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Modal */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; }
+        .input-group { margin: 15px 0; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; background: #f8f9fa; padding: 12px; border-bottom: 2px solid #dee2e6; font-size: 0.9rem; color: #666; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn-add { background: #f0f4f8; border: 1px dashed #cbd5e0; padding: 8px; cursor: pointer; width: 100%; border-radius: 4px; }
-        .btn-add:hover { background: #e2e8f0; }
+        
+        .btn-prime { background: var(--aims-blue); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-modify { background: #e2e8f0; color: #4a5568; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .btn-modify:hover { background: var(--aims-blue); color: white; }
+        .btn-yn { padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
     </style>
 </head>
-<body>
+<body onkeydown="handleGlobalEnter(event)">
 
     <div id="login-screen" class="overlay">
         <div class="login-box">
-            <h2>TUPV AIMS</h2>
-            <input type="text" id="userIn" placeholder="Username (TUPV)">
-            <input type="password" id="passIn" placeholder="Password (MXE 1-A)">
-            <button onclick="checkLogin()">LOGIN</button>
+            <h2 style="color:var(--aims-blue)">TUPV AIMS</h2>
+            <input type="text" id="uIn" placeholder="Username (TUPV)">
+            <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
+            <button class="btn-prime" onclick="login()">LOGIN (Enter)</button>
         </div>
     </div>
 
-    <div id="score-modal" class="modal-overlay hidden">
+    <div id="score-modal" class="modal-bg hidden">
         <div class="modal-card">
-            <h2 id="modal-title" style="margin-top:0; color:var(--aims-blue);"></h2>
-            <div id="input-zone">
-                <div class="step-box">
-                    <p id="step-label">Enter Raw Score:</p>
-                    <input type="number" id="current-score" style="width:100%; padding:10px; font-size:1.1rem;" onkeydown="if(event.key==='Enter') nextStep()">
-                </div>
-                <div class="step-box hidden" id="total-box">
-                    <p>Enter Total Score:</p>
-                    <input type="number" id="current-total" style="width:100%; padding:10px; font-size:1.1rem;" onkeydown="if(event.key==='Enter') nextStep()">
-                </div>
-                <button onclick="nextStep()" id="main-action-btn" style="width:100%; padding:12px; background:var(--aims-blue); color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">CONTINUE (Enter)</button>
+            <h3 id="m-title" style="margin-top:0; color:var(--aims-blue);"></h3>
+            <div id="step-inputs">
+                <div class="input-group"><label>Raw Score:</label><input type="number" id="m-raw"></div>
+                <div class="input-group"><label>Total Score:</label><input type="number" id="m-tot"></div>
+                <button class="btn-prime" onclick="processStep()">Next Step (Enter)</button>
             </div>
-
-            <div id="loop-zone" class="hidden" style="text-align:center;">
-                <p style="font-weight:bold; font-size:1.1rem;">Add another activity for this term?</p>
-                <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-                    <button class="btn-yes" onclick="loopAnswer(true)">YES (Add More)</button>
-                    <button class="btn-no" onclick="loopAnswer(false)">NO (Go to Exam)</button>
+            <div id="step-confirm" class="hidden" style="text-align:center;">
+                <p><strong>Add another activity?</strong></p>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                    <button class="btn-yn" style="background:#28a745" onclick="handleYN(true)">YES</button>
+                    <button class="btn-yn" style="background:#dc3545" onclick="handleYN(false)">NO</button>
                 </div>
             </div>
-            
-            <button onclick="closeModal()" style="margin-top:20px; background:none; border:none; color:grey; cursor:pointer; width:100%;">Cancel and Exit</button>
+            <button onclick="closeM()" style="margin-top:20px; background:none; border:none; color:#999; cursor:pointer; width:100%;">Cancel</button>
         </div>
     </div>
 
     <div id="app" class="hidden">
         <nav class="sidebar">
-            <div class="sidebar-header"><h3>ADMIN REGISTRAR</h3></div>
+            <div class="sidebar-header">TUPV REGISTRAR</div>
             <ul>
-                <li onclick="location.reload()">Dashboard</li>
-                <li onclick="wipeSystem()">Wipe System</li>
-                <li onclick="location.reload()">Logout</li>
+                <li id="nav-dash" class="active" onclick="switchTab('dash')">📊 Dashboard</li>
+                <li id="nav-edit" onclick="switchTab('edit')">✏️ Manage Scores</li>
+                <li onclick="wipe()">🧹 Wipe System</li>
+                <li onclick="location.reload()" style="color:#ff9999">🔒 Logout</li>
             </ul>
         </nav>
-        <main class="main-content">
-            <header>
-                <h1>Grade Tracker</h1>
-                <input type="text" id="search" style="padding:10px; width:300px; border:1px solid #ccc; border-radius:4px;" placeholder="Search student name..." onkeyup="renderRecords()">
-            </header>
-            <div class="card">
-                <h3>Enroll New Student</h3>
-                <input type="text" id="newName" placeholder="Full Name" style="padding:10px; border:1px solid #ddd;">
-                <input type="number" id="newAge" placeholder="Age" style="padding:10px; width:60px; border:1px solid #ddd;">
-                <button onclick="addStudent()" style="padding:10px 20px; background:var(--aims-blue); color:white; border:none; border-radius:4px; cursor:pointer;">Enroll</button>
+
+        <main class="content">
+            <div id="view-dash">
+                <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h1>Overview</h1>
+                    <input type="text" class="search-box" id="search-dash" placeholder="Search..." onkeyup="render()" style="padding:10px; border-radius:4px; border:1px solid #ccc;">
+                </header>
+                <div class="card">
+                    <h3>Enroll New Student</h3>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="nName" placeholder="Full Name" style="padding:10px; flex:2;">
+                        <input type="number" id="nAge" placeholder="Age" style="padding:10px; flex:0.5;">
+                        <button class="btn-prime" style="flex:1" onclick="addS()">Enroll Student</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <table id="table-dash">
+                        <thead><tr><th>Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Average</th><th>Status</th></tr></thead>
+                        <tbody id="dash-list"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="card">
-                <table>
-                    <thead>
-                        <tr><th>Name</th><th>Prelim (30%)</th><th>Midterm (30%)</th><th>Endterm (40%)</th><th>Average</th><th>Status</th><th>Action</th></tr>
-                    </thead>
-                    <tbody id="student-list"></tbody>
-                </table>
+
+            <div id="view-edit" class="hidden">
+                <header style="margin-bottom:20px;"><h1>Manage & Edit Scores</h1></header>
+                <div class="card">
+                    <table>
+                        <thead><tr><th>Student Name</th><th>Prelim Action</th><th>Midterm Action</th><th>Endterm Action</th><th>Remove</th></tr></thead>
+                        <tbody id="edit-list"></tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        let students = JSON.parse(localStorage.getItem('tupv_records')) || [];
-        let state = { idx: -1, term: '', phase: 'weekly_raw', weeklyScores: [] };
+        let db = JSON.parse(localStorage.getItem('tupv_v4')) || [];
+        let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [] };
 
-        function checkLogin() {
-            if(document.getElementById('userIn').value === "TUPV" && document.getElementById('passIn').value === "MXE 1-A") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-                renderRecords();
-            } else { alert("Denied"); }
+        function handleGlobalEnter(e) {
+            if (e.key === 'Enter') {
+                if (!document.getElementById('login-screen').classList.contains('hidden')) login();
+                else if (!document.getElementById('score-modal').classList.contains('hidden')) {
+                    if (document.getElementById('step-inputs').classList.contains('hidden')) return;
+                    processStep();
+                } else if (document.activeElement.id === 'nName' || document.activeElement.id === 'nAge') {
+                    addS();
+                }
+            }
         }
 
-        function addStudent() {
-            const n = document.getElementById('newName').value;
-            const a = document.getElementById('newAge').value;
-            if(!n || !a) return;
-            students.push({ name: n, age: a, prelim: -1, midterm: -1, endterm: -1, average: 0 });
-            document.getElementById('newName').value = ''; document.getElementById('newAge').value = '';
+        function login() {
+            if (document.getElementById('uIn').value === "TUPV" && document.getElementById('pIn').value === "MXE 1-A") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                render();
+            } else { alert("Invalid Credentials"); }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-dash').classList.toggle('hidden', tab !== 'dash');
+            document.getElementById('view-edit').classList.toggle('hidden', tab !== 'edit');
+            document.getElementById('nav-dash').classList.toggle('active', tab === 'dash');
+            document.getElementById('nav-edit').classList.toggle('active', tab === 'edit');
+            render();
+        }
+
+        function addS() {
+            const n = document.getElementById('nName').value;
+            const a = document.getElementById('nAge').value;
+            if (!n || !a) return;
+            db.push({ name: n, age: a, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
+            document.getElementById('nName').value = ''; document.getElementById('nAge').value = '';
             save();
         }
 
-        function openScorePanel(idx, term) {
-            state = { idx, term, phase: 'weekly_raw', weeklyScores: [] };
-            document.getElementById('modal-title').innerText = `${term.toUpperCase()} - Weekly Activity #${state.weeklyScores.length + 1}`;
-            resetModalInputs();
+        function openP(i, term) {
+            state = { idx: i, term: term, mode: 'weekly', weeklyData: [] };
+            showInputStep();
             document.getElementById('score-modal').classList.remove('hidden');
-            document.getElementById('current-score').focus();
         }
 
-        function nextStep() {
-            const raw = parseFloat(document.getElementById('current-score').value);
-            const tot = parseFloat(document.getElementById('current-total').value);
-
-            if (state.phase === 'weekly_raw') {
-                document.getElementById('total-box').classList.remove('hidden');
-                state.phase = 'weekly_total';
-                document.getElementById('current-total').focus();
-            } 
-            else if (state.phase === 'weekly_total') {
-                if(isNaN(raw) || isNaN(tot) || tot <= 0) return alert("Invalid entry");
-                state.weeklyScores.push(((raw/tot)*9)+1);
-                
-                document.getElementById('input-zone').classList.add('hidden');
-                document.getElementById('loop-zone').classList.remove('hidden');
-            }
-            else if (state.phase === 'major_raw') {
-                document.getElementById('total-box').classList.remove('hidden');
-                state.phase = 'major_total';
-                document.getElementById('current-total').focus();
-            }
-            else if (state.phase === 'major_total') {
-                if(isNaN(raw) || isNaN(tot) || tot <= 0) return alert("Invalid entry");
-                const majorGrade = ((raw/tot)*9)+1;
-                const weeklyAvg = state.weeklyScores.reduce((a,b)=>a+b, 0) / state.weeklyScores.length;
-                
-                // 60/40 Split
-                const finalTermGrade = (weeklyAvg * 0.6) + (majorGrade * 0.4);
-                students[state.idx][state.term.toLowerCase()] = finalTermGrade;
-                
-                recalcStudent(students[state.idx]);
-                closeModal();
-                save();
-            }
+        function showInputStep() {
+            document.getElementById('step-inputs').classList.remove('hidden');
+            document.getElementById('step-confirm').classList.add('hidden');
+            const title = state.mode === 'weekly' ? `Weekly Activity #${state.weeklyData.length + 1}` : `Major Exam`;
+            document.getElementById('m-title').innerText = `${state.term.toUpperCase()}: ${title}`;
+            document.getElementById('m-raw').value = ''; document.getElementById('m-tot').value = '';
+            document.getElementById('m-raw').focus();
         }
 
-        function loopAnswer(wantsMore) {
-            if (wantsMore) {
-                state.phase = 'weekly_raw';
-                document.getElementById('modal-title').innerText = `${state.term.toUpperCase()} - Weekly Activity #${state.weeklyScores.length + 1}`;
-                resetModalInputs();
+        function processStep() {
+            const r = parseFloat(document.getElementById('m-raw').value);
+            const t = parseFloat(document.getElementById('m-tot').value);
+            if (isNaN(r) || isNaN(t) || t <= 0) return alert("Invalid Scores");
+            const scaled = ((r / t) * 9) + 1;
+            if (state.mode === 'weekly') {
+                state.weeklyData.push(scaled);
+                document.getElementById('step-inputs').classList.add('hidden');
+                document.getElementById('step-confirm').classList.remove('hidden');
             } else {
-                state.phase = 'major_raw';
-                document.getElementById('modal-title').innerText = `${state.term.toUpperCase()} - Major Exam`;
-                resetModalInputs();
-                document.getElementById('step-label').innerText = "Enter Major Exam Raw Score:";
+                const wAvg = state.weeklyData.reduce((a, b) => a + b, 0) / state.weeklyData.length;
+                db[state.idx][state.term.toLowerCase()] = (wAvg * 0.6) + (scaled * 0.4);
+                recalc(db[state.idx]);
+                save(); closeM();
             }
         }
 
-        function resetModalInputs() {
-            document.getElementById('input-zone').classList.remove('hidden');
-            document.getElementById('loop-zone').classList.add('hidden');
-            document.getElementById('total-box').classList.add('hidden');
-            document.getElementById('current-score').value = '';
-            document.getElementById('current-total').value = '';
-            document.getElementById('current-score').focus();
+        function handleYN(yes) {
+            if (yes) { state.mode = 'weekly'; showInputStep(); } 
+            else { state.mode = 'major'; showInputStep(); }
         }
 
-        function recalcStudent(s) {
-            let p = s.prelim === -1 ? 0 : s.prelim;
-            let m = s.midterm === -1 ? 0 : s.midterm;
-            let e = s.endterm === -1 ? 0 : s.endterm;
-            s.average = (p * 0.3) + (m * 0.3) + (e * 0.4);
-        }
+        function render() {
+            const dList = document.getElementById('dash-list');
+            const eList = document.getElementById('edit-list');
+            const q = document.getElementById('search-dash').value.toLowerCase();
+            dList.innerHTML = ''; eList.innerHTML = '';
 
-        function renderRecords() {
-            const list = document.getElementById('student-list');
-            const search = document.getElementById('search').value.toLowerCase();
-            list.innerHTML = '';
-            students.forEach((s, i) => {
-                if(!s.name.toLowerCase().includes(search)) return;
-                let stat = s.endterm === -1 ? "INC" : (s.average >= 5.0 ? "PASS" : "FAIL");
-                list.innerHTML += `<tr>
+            db.forEach((s, i) => {
+                if (!s.name.toLowerCase().includes(q)) return;
+                let stat = s.endterm === -1 ? "INC" : (s.avg >= 5.0 ? "PASS" : "FAIL");
+                
+                // Dashboard Row
+                dList.innerHTML += `<tr>
                     <td><b>${s.name.toUpperCase()}</b></td>
-                    <td><button class="btn-add" onclick="openScorePanel(${i},'prelim')">${s.prelim===-1?'+':s.prelim.toFixed(2)}</button></td>
-                    <td><button class="btn-add" onclick="openScorePanel(${i},'midterm')">${s.midterm===-1?'+':s.midterm.toFixed(2)}</button></td>
-                    <td><button class="btn-add" onclick="openScorePanel(${i},'endterm')">${s.endterm===-1?'+':s.endterm.toFixed(2)}</button></td>
-                    <td>${s.average.toFixed(2)}</td>
-                    <td class="${stat==='PASS'?'status-pass':'status-fail'}">${stat}</td>
-                    <td><button class="btn-del" onclick="del(${i})">Delete</button></td>
+                    <td>${s.prelim === -1 ? '-' : s.prelim.toFixed(2)}</td>
+                    <td>${s.midterm === -1 ? '-' : s.midterm.toFixed(2)}</td>
+                    <td>${s.endterm === -1 ? '-' : s.endterm.toFixed(2)}</td>
+                    <td><b>${s.avg.toFixed(2)}</b></td>
+                    <td style="color:${stat==='PASS'?'green':'red'}"><b>${stat}</b></td>
+                </tr>`;
+
+                // Edit Row
+                eList.innerHTML += `<tr>
+                    <td><b>${s.name.toUpperCase()}</b></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'prelim')">MODIFY PRELIM</button></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'midterm')">MODIFY MIDTERM</button></td>
+                    <td><button class="btn-modify" onclick="openP(${i},'endterm')">MODIFY ENDTERM</button></td>
+                    <td><button onclick="del(${i})" style="border:none; background:none; cursor:pointer;">🗑️</button></td>
                 </tr>`;
             });
         }
 
-        function del(i) { if(confirm("Delete student?")) { students.splice(i,1); save(); } }
-        function save() { localStorage.setItem('tupv_records', JSON.stringify(students)); renderRecords(); }
-        function closeModal() { document.getElementById('score-modal').classList.add('hidden'); }
-        function wipeSystem() { if(confirm("WIPE ALL?")) { students = []; save(); } }
+        function recalc(s) {
+            let p = s.prelim === -1 ? 0 : s.prelim, m = s.midterm === -1 ? 0 : s.midterm, e = s.endterm === -1 ? 0 : s.endterm;
+            s.avg = (p * 0.3) + (m * 0.3) + (e * 0.4);
+        }
+
+        function del(i) { if(confirm("Delete student?")) { db.splice(i,1); save(); } }
+        function save() { localStorage.setItem('tupv_v4', JSON.stringify(db)); render(); }
+        function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
+        function wipe() { if(confirm("Wipe all records?")) { db = []; save(); } }
     </script>
 </body>
 </html>
