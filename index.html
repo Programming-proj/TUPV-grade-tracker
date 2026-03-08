@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Universal Portal</title>
+    <title>TUPV AIMS | Semester Master</title>
     <style>
         :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
@@ -22,16 +22,15 @@
         
         /* Modals */
         .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); }
-        .sim-slider { width: 100%; margin: 15px 0; accent-color: var(--tup-red); }
-
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); max-height: 80vh; overflow-y: auto; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); font-size: 0.8rem; color: var(--tup-red); }
         td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
 
         .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .search-input { padding: 10px; border-radius: 4px; border: 1px solid #ddd; width: 250px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
     </style>
 </head>
 <body onkeydown="handleGlobalEnter(event)">
@@ -39,25 +38,9 @@
     <div id="login-screen" class="overlay" style="position:fixed; inset:0; background:var(--tup-red); z-index:2000; display:flex; justify-content:center; align-items:center;">
         <div style="background:white; padding:40px; border-radius:8px; text-align:center; width:300px;">
             <h2 style="color:var(--tup-red)">TUPV AIMS</h2>
-            <input type="text" id="uIn" placeholder="Username (TUPV)" style="width:100%; margin:10px 0; padding:10px;">
-            <input type="password" id="pIn" placeholder="Password (MXE 1-A)" style="width:100%; margin:10px 0; padding:10px;">
+            <input type="text" id="uIn" placeholder="Username" style="width:100%; margin-bottom:10px;">
+            <input type="password" id="pIn" placeholder="Password" style="width:100%; margin-bottom:15px;">
             <button class="btn-prime" onclick="login()">LOGIN (Enter)</button>
-        </div>
-    </div>
-
-    <div id="sim-modal" class="modal-bg hidden">
-        <div class="modal-card">
-            <h3 id="sim-name" style="margin-top:0; color:var(--tup-red)"></h3>
-            <p>Drag the slider to see how a potential **Endterm** grade affects the average.</p>
-            <div style="text-align:center; margin:20px 0;">
-                <label>Simulated Endterm: <b id="sim-val">5.00</b></label>
-                <input type="range" min="1" max="10" step="0.1" value="5" class="sim-slider" id="sim-input" oninput="updateSim()">
-                <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-top:10px;">
-                    <span style="font-size:0.9rem">Final Average Result:</span><br>
-                    <b id="sim-result" style="font-size:1.8rem; color:var(--tup-red)">---</b>
-                </div>
-            </div>
-            <button class="btn-prime" onclick="closeSim()">Close Simulator</button>
         </div>
     </div>
 
@@ -65,16 +48,14 @@
         <div class="modal-card">
             <h3 id="m-title" style="color:var(--tup-red)"></h3>
             <div id="step-inputs">
-                <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; padding:10px; margin-bottom:10px;">
-                <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; padding:10px; margin-bottom:10px;">
+                <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; margin-bottom:10px;">
+                <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; margin-bottom:10px;">
                 <button class="btn-prime" onclick="processStep()">Next Step (Enter)</button>
             </div>
             <div id="step-confirm" class="hidden" style="text-align:center;">
                 <p>Add another activity?</p>
-                <div style="display:flex; gap:10px; justify-content:center;">
-                    <button class="btn-sec" style="background:#38a169; color:white;" onclick="handleYN(true)">YES</button>
-                    <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="handleYN(false)">NO</button>
-                </div>
+                <button class="btn-sec" onclick="handleYN(true)">YES</button>
+                <button class="btn-sec" onclick="handleYN(false)">NO</button>
             </div>
             <button onclick="closeM()" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
         </div>
@@ -99,26 +80,19 @@
                         <div id="dna-container" style="margin-top:5px;"></div>
                     </div>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="search-input" class="search-input" placeholder="Search student name..." onkeyup="render()">
-                        <select id="sub-sel" onchange="render()" style="padding:10px; border-radius:4px; border:1px solid #ddd;">
-                            <option value="Chemistry">Chemistry for Engineers</option>
-                            <option value="AutoCad">AutoCad</option>
-                            <option value="Math">Math in Modern World</option>
-                            <option value="Calculus">Differential Calculus</option>
-                            <option value="Programming">Programming</option>
-                        </select>
+                        <input type="text" id="search-input" placeholder="Search student..." onkeyup="render()">
+                        <select id="sub-sel" onchange="render()"></select>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top:0;">Enroll New Student (All Subjects)</h3>
+                    <h3 style="margin-top:0;">Enroll New Student</h3>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="nName" placeholder="Full Name" style="padding:12px; flex:2; border:1px solid #ddd; border-radius:4px;">
-                        <input type="number" id="nAge" placeholder="Age" style="padding:12px; flex:0.5; border:1px solid #ddd; border-radius:4px;">
-                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL STUDENT</button>
+                        <input type="text" id="nName" placeholder="Full Name" style="flex:2;">
+                        <input type="number" id="nAge" placeholder="Age" style="flex:0.5;">
+                        <button class="btn-prime" style="flex:1" onclick="addS()">ENROLL</button>
                     </div>
                 </div>
-
                 <div class="card"><table id="dash-list"></table></div>
             </div>
 
@@ -128,12 +102,26 @@
             </div>
 
             <div id="view-sys" class="hidden">
-                <h2>System Tools</h2>
+                <h2>System Settings</h2>
+                
                 <div class="card">
-                    <h3>Backup String</h3>
-                    <textarea id="backup-str" style="width:100%; height:80px; font-family:monospace; padding:10px; margin-bottom:10px;"></textarea>
+                    <h3>Subject Manager</h3>
+                    <p style="font-size:0.8rem; color:#666;">Add new subjects for next semester here. Ensure percentages sum to 1.0 (e.g., 0.5 + 0.5).</p>
+                    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:5px; margin-bottom:10px;">
+                        <input type="text" id="sj-name" placeholder="Subject Name">
+                        <input type="number" id="sj-act" placeholder="Act %" step="0.1">
+                        <input type="number" id="sj-exm" placeholder="Exam %" step="0.1">
+                        <input type="number" id="sj-att" placeholder="Att %" step="0.1">
+                        <button class="btn-prime" onclick="addSubject()">ADD</button>
+                    </div>
+                    <table id="sj-table"></table>
+                </div>
+
+                <div class="card">
+                    <h3>Data Backup</h3>
+                    <textarea id="backup-str" style="width:100%; height:60px; font-family:monospace; margin-bottom:10px;"></textarea>
                     <button class="btn-sec" onclick="generateBackup()">Generate</button>
-                    <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="restoreBackup()">Restore</button>
+                    <button class="btn-sec" onclick="restoreBackup()">Restore</button>
                 </div>
                 <button class="btn-sec" style="background:#cc0000; color:white;" onclick="wipe()">WIPE ALL DATA</button>
             </div>
@@ -141,34 +129,21 @@
     </div>
 
     <script>
-        const CONFIG = {
+        // Default Config if empty
+        let config = JSON.parse(localStorage.getItem('tupv_config')) || {
             "Chemistry": { act: 0.6, exam: 0.4, att: 0 },
-            "AutoCad": { act: 0.6, exam: 0.4, att: 0 },
-            "Math": { act: 0.5, exam: 0.5, att: 0 },
-            "Calculus": { act: 0.7, exam: 0.3, att: 0 },
             "Programming": { act: 0.5, exam: 0.4, att: 0.1 }
         };
-
-        let db = JSON.parse(localStorage.getItem('tupv_v9_final')) || [];
+        let db = JSON.parse(localStorage.getItem('tupv_v10_final')) || [];
         let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [], attScore: 0 };
-        let simIdx = -1;
-
-        function handleGlobalEnter(e) {
-            if (e.key === 'Enter') {
-                if (!document.getElementById('login-screen').classList.contains('hidden')) login();
-                else if (!document.getElementById('score-modal').classList.contains('hidden')) {
-                    if (document.getElementById('step-inputs').classList.contains('hidden')) return;
-                    processStep();
-                } else if (document.activeElement.id === 'nName' || document.activeElement.id === 'nAge') addS();
-            }
-        }
 
         function login() {
             if(document.getElementById('uIn').value==="TUPV" && document.getElementById('pIn').value==="MXE 1-A") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
+                updateSubjectDropdown();
                 render();
-            } else { alert("Wrong Credentials"); }
+            }
         }
 
         function switchTab(tab) {
@@ -179,19 +154,46 @@
             render();
         }
 
+        function updateSubjectDropdown() {
+            const sel = document.getElementById('sub-sel');
+            const currentVal = sel.value;
+            sel.innerHTML = Object.keys(config).map(k => `<option value="${k}" ${k===currentVal?'selected':''}>${k}</option>`).join('');
+        }
+
+        function addSubject() {
+            const name = document.getElementById('sj-name').value.trim();
+            const act = parseFloat(document.getElementById('sj-act').value) || 0;
+            const exm = parseFloat(document.getElementById('sj-exm').value) || 0;
+            const att = parseFloat(document.getElementById('sj-att').value) || 0;
+
+            if(!name || (act + exm + att) !== 1) return alert("Total percentages must equal 1.0 (100%)");
+            
+            config[name] = { act, exam: exm, att };
+            localStorage.setItem('tupv_config', JSON.stringify(config));
+            updateSubjectDropdown();
+            render();
+            alert("Subject Added! Note: Existing students must be re-enrolled to see new subjects.");
+        }
+
+        function delSubject(name) {
+            if(confirm(`Delete ${name}?`)) {
+                delete config[name];
+                db = db.filter(s => s.subject !== name);
+                localStorage.setItem('tupv_config', JSON.stringify(config));
+                updateSubjectDropdown();
+                save();
+            }
+        }
+
         function addS() {
             const n = document.getElementById('nName').value.trim();
             const a = document.getElementById('nAge').value.trim();
             if(!n || !a) return;
-            
-            // Check if student exists globally
-            if(db.some(s => s.name.toLowerCase() === n.toLowerCase())) return alert("Student already exists!");
+            if(db.some(s => s.name.toLowerCase() === n.toLowerCase())) return alert("Already exists!");
 
-            // Create entry for EVERY subject
-            Object.keys(CONFIG).forEach(subKey => {
+            Object.keys(config).forEach(subKey => {
                 db.push({ name: n, age: a, subject: subKey, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
             });
-
             document.getElementById('nName').value = ''; document.getElementById('nAge').value = '';
             save();
         }
@@ -199,23 +201,78 @@
         function render() {
             const currentSub = document.getElementById('sub-sel').value;
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const cfg = CONFIG[currentSub];
+            const cfg = config[currentSub] || {act:0, exam:0, att:0};
             
-            document.getElementById('dna-container').innerHTML = `
-                <span class="dna-pill">Activities: ${cfg.act*100}%</span>
-                <span class="dna-pill">Exams: ${cfg.exam*100}%</span>
-                ${cfg.att > 0 ? `<span class="dna-pill">Attendance: ${cfg.att*100}%</span>` : ''}
-            `;
+            // Render DNA
+            document.getElementById('dna-container').innerHTML = `<span class="dna-pill">Act: ${cfg.act*100}%</span><span class="dna-pill">Exam: ${cfg.exam*100}%</span>${cfg.att > 0 ? `<span class="dna-pill">Att: ${cfg.att*100}%</span>` : ''}`;
 
-            let dHTML = `<tr><th>Name</th><th>Prelim</th><th>Midterm</th><th>Endterm</th><th>Average</th><th>What-If</th></tr>`;
-            let eHTML = `<tr><th>Name</th><th>Edit P</th><th>Edit M</th><th>Edit E</th><th>Action</th></tr>`;
+            // Render Tables
+            let dHTML = `<tr><th>Name</th><th>P</th><th>M</th><th>E</th><th>Avg</th></tr>`;
+            let eHTML = `<tr><th>Name</th><th>Edit P</th><th>Edit M</th><th>Edit E</th><th>Del</th></tr>`;
 
             db.filter(s => s.subject === currentSub && s.name.toLowerCase().includes(searchTerm)).forEach(s => {
                 const i = db.indexOf(s);
-                dHTML += `<tr>
-                    <td><b>${s.name.toUpperCase()}</b></td>
-                    <td>${s.prelim===-1?'-':s.prelim.toFixed(2)}</td>
-                    <td>${s.midterm===-1?'-':s.midterm.toFixed(2)}</td>
-                    <td>${s.endterm===-1?'-':s.endterm.toFixed(2)}</td>
-                    <td style="color:var(--tup-red)"><b>${s.avg.toFixed(2)}</b></td>
-                    <td><button class="btn-sec
+                dHTML += `<tr><td><b>${s.name.toUpperCase()}</b></td><td>${s.prelim.toFixed(2)}</td><td>${s.midterm.toFixed(2)}</td><td>${s.endterm.toFixed(2)}</td><td><b>${s.avg.toFixed(2)}</b></td></tr>`;
+                eHTML += `<tr><td><b>${s.name.toUpperCase()}</b></td><td><button class="btn-sec" onclick="openP(${i},'prelim')">P</button></td><td><button class="btn-sec" onclick="openP(${i},'midterm')">M</button></td><td><button class="btn-sec" onclick="openP(${i},'endterm')">E</button></td><td><button onclick="delStudent('${s.name}')">🗑️</button></td></tr>`;
+            });
+            document.getElementById('dash-list').innerHTML = dHTML;
+            document.getElementById('edit-list').innerHTML = eHTML;
+
+            // Render Subject List in System
+            document.getElementById('sj-table').innerHTML = `<tr><th>Subject</th><th>Setup</th><th>Action</th></tr>` + 
+                Object.keys(config).map(k => `<tr><td>${k}</td><td>${config[k].act*100}/${config[k].exam*100}/${config[k].att*100}</td><td><button onclick="delSubject('${k}')">❌</button></td></tr>`).join('');
+        }
+
+        function openP(i, term) {
+            state = { idx: i, term: term, mode: 'weekly', weeklyData: [], attScore: 0 };
+            showStep();
+            document.getElementById('score-modal').classList.remove('hidden');
+        }
+
+        function showStep() {
+            document.getElementById('step-inputs').classList.remove('hidden');
+            document.getElementById('step-confirm').classList.add('hidden');
+            let label = state.mode==='weekly' ? `Activity #${state.weeklyData.length+1}` : (state.mode==='exam' ? 'Major Exam' : 'Attendance');
+            document.getElementById('m-title').innerText = `${state.term.toUpperCase()}: ${label}`;
+            document.getElementById('m-raw').value = ''; document.getElementById('m-tot').value = '';
+            document.getElementById('m-raw').focus();
+        }
+
+        function processStep() {
+            const r = parseFloat(document.getElementById('m-raw').value);
+            const t = parseFloat(document.getElementById('m-tot').value);
+            if(isNaN(r) || isNaN(t)) return;
+            const scaled = ((r/t)*9)+1;
+
+            if(state.mode==='weekly') {
+                state.weeklyData.push(scaled);
+                document.getElementById('step-inputs').classList.add('hidden');
+                document.getElementById('step-confirm').classList.remove('hidden');
+            } else if(state.mode==='exam') {
+                state.examScore = scaled;
+                if(config[db[state.idx].subject].att > 0) { state.mode='att'; showStep(); }
+                else finalize();
+            } else { state.attScore = scaled; finalize(); }
+        }
+
+        function handleYN(yes) { if(yes) showStep(); else { state.mode='exam'; showStep(); } }
+
+        function finalize() {
+            const cfg = config[db[state.idx].subject];
+            const wAvg = state.weeklyData.reduce((a,b)=>a+b,0)/state.weeklyData.length;
+            db[state.idx][state.term.toLowerCase()] = (wAvg * cfg.act) + (state.examScore * cfg.exam) + (state.attScore * (cfg.att||0));
+            let s = db[state.idx];
+            s.avg = ((s.prelim===-1?0:s.prelim)*0.3)+((s.midterm===-1?0:s.midterm)*0.3)+((s.endterm===-1?0:s.endterm)*0.4);
+            save(); closeM();
+        }
+
+        function handleGlobalEnter(e) { if(e.key === 'Enter') { if(!document.getElementById('login-screen').classList.contains('hidden')) login(); else if(!document.getElementById('score-modal').classList.contains('hidden')) processStep(); } }
+        function delStudent(name) { if(confirm("Delete from ALL subjects?")) { db = db.filter(s => s.name.toLowerCase() !== name.toLowerCase()); save(); } }
+        function save() { localStorage.setItem('tupv_v10_final', JSON.stringify(db)); render(); }
+        function closeM() { document.getElementById('score-modal').classList.add('hidden'); }
+        function generateBackup() { document.getElementById('backup-str').value = btoa(JSON.stringify({db, config})); }
+        function restoreBackup() { try { const data = JSON.parse(atob(document.getElementById('backup-str').value)); db = data.db; config = data.config; localStorage.setItem('tupv_config', JSON.stringify(config)); save(); updateSubjectDropdown(); } catch(e) { alert("Invalid data"); } }
+        function wipe() { if(confirm("WIPE?")) { db = []; save(); } }
+    </script>
+</body>
+</html>
