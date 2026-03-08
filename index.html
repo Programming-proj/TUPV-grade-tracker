@@ -3,75 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Secure Access</title>
+    <title>TUPV AIMS | Master Portal</title>
     <style>
-        :root { --tup-red: #800000; --bg: #f8f0f0; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); }
+        :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         .hidden { display: none !important; }
+
+        /* Login Screen */
         .overlay { position: fixed; inset: 0; background: var(--tup-red); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        
+        /* Layout */
+        .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; }
+        .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar li:hover, .sidebar li.active { background: var(--tup-dark); border-left: 5px solid #ff0000; }
+        .content { margin-left: 240px; padding: 30px; }
+
+        /* UI Elements */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
+        .dna-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #eee; font-size: 0.75rem; margin-right: 5px; font-weight: bold; color: var(--tup-red); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); color: var(--tup-red); font-size: 0.8rem; }
+        td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+
         .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-prime:hover { background: #600000; }
-        #app { padding: 20px; }
+        .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+
+        /* Modals */
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="overlay">
         <div class="login-box">
-            <h2 style="color:var(--tup-red); margin-top:0;">TUPV AIMS</h2>
-            <p style="font-size: 0.8rem; color: #666;">Enter Credentials</p>
+            <h2 style="color:var(--tup-red); margin:0;">TUPV AIMS</h2>
+            <p style="margin-bottom:20px; color:#666;">Portal Access</p>
             <input type="text" id="uIn" placeholder="Username (TUPV)">
             <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
-            <button type="button" class="btn-prime" onclick="handleLoginAttempt()">LOGIN</button>
-            <p id="err-msg" style="color: red; font-size: 0.8rem; margin-top: 10px;" class="hidden">Invalid Credentials</p>
+            <button class="btn-prime" onclick="handleLogin()">LOGIN</button>
+            <p id="login-err" style="color:red; font-size:0.8rem; margin-top:10px;" class="hidden">Access Denied: Try Again</p>
+        </div>
+    </div>
+
+    <div id="sim-modal" class="modal-bg hidden">
+        <div class="modal-card">
+            <h3 id="sim-name" style="margin-top:0; color:var(--tup-red)"></h3>
+            <p>Simulate **Endterm** impact on final average:</p>
+            <input type="range" min="1" max="10" step="0.1" id="sim-range" style="width:100%; accent-color:var(--tup-red);" oninput="runSim()">
+            <div style="background:#f9f9f9; padding:15px; text-align:center; margin-top:10px; border-radius:8px;">
+                Endterm: <b id="sim-label">5.0</b> <br>
+                <span style="font-size:1.5rem; color:var(--tup-red)">Avg: <b id="sim-res">0.00</b></span>
+            </div>
+            <button class="btn-prime" style="margin-top:15px;" onclick="closeModal('sim-modal')">Close</button>
+        </div>
+    </div>
+
+    <div id="score-modal" class="modal-bg hidden">
+        <div class="modal-card">
+            <h3 id="m-title" style="color:var(--tup-red)"></h3>
+            <div id="step-inputs">
+                <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; margin-bottom:10px;">
+                <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; margin-bottom:10px;">
+                <button class="btn-prime" onclick="processStep()">Next Step</button>
+            </div>
+            <div id="step-confirm" class="hidden" style="text-align:center;">
+                <p>Add another activity?</p>
+                <button class="btn-sec" onclick="handleYN(true)">YES</button>
+                <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="handleYN(false)">NO</button>
+            </div>
+            <button onclick="closeModal('score-modal')" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
     <div id="app" class="hidden">
-        <h1 style="color:var(--tup-red)">Welcome to AIMS Portal</h1>
-        <p>If you see this, the login worked!</p>
-        <button class="btn-prime" style="width: 200px;" onclick="location.reload()">LOGOUT</button>
-        <hr>
-        <div id="main-content">
-            <p>Ready to manage records.</p>
-        </div>
-    </div>
-
-    <script>
-        // 1. Connection Check: This runs as soon as the page loads
-        console.log("System Online: Ready for login.");
-
-        function handleLoginAttempt() {
-            console.log("Login button clicked!"); // If you don't see this in F12 console, the button is broken.
-
-            const userField = document.getElementById('uIn');
-            const passField = document.getElementById('pIn');
-            const errMsg = document.getElementById('err-msg');
-
-            const username = userField.value.trim().toUpperCase();
-            const password = passField.value.trim().toUpperCase();
-
-            // Simplified check
-            if (username === "TUPV" && password === "MXE 1-A") {
-                console.log("Access Granted");
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-            } else {
-                console.log("Access Denied");
-                errMsg.classList.remove('hidden');
-                userField.style.borderColor = "red";
-                passField.style.borderColor = "red";
-            }
-        }
-
-        // Support for "Enter" key
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                handleLoginAttempt();
-            }
-        });
-    </script>
-</body>
-</html>
+        <nav class="sidebar">
+            <div class="sidebar-header">TUPV REGISTRAR</div>
+            <ul>
+                <li id="nav-dash" class="active" onclick="tab('dash')">📊 Overview Dash</li>
+                <li id="nav-edit" onclick="tab('edit')">✏️ Manage Records</li>
+                <li id="nav-sys" onclick="tab('sys')">⚙️ System Settings</li>
+                <li onclick="location.reload()" style="color:#ff
