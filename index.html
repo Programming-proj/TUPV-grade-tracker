@@ -3,57 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV Grade Tracker | AIMS Portal</title>
+    <title>TUPV Grade Tracker | AIMS Portal Master</title>
     <style>
-        :root {
-            --tup-red: #800000;
-            --aims-blue: #1a3a5f;
-            --aims-light: #2c5282;
-            --bg-grey: #f4f7f9;
-        }
-
+        :root { --tup-red: #800000; --aims-blue: #1a3a5f; --aims-light: #2c5282; --bg-grey: #f4f7f9; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; margin: 0; background-color: var(--bg-grey); color: #333; }
         .hidden { display: none !important; }
 
         /* --- LOGIN SCREEN --- */
-        .overlay {
-            position: fixed; inset: 0; background: linear-gradient(135deg, var(--aims-blue), #000);
-            display: flex; justify-content: center; align-items: center; z-index: 2000;
-        }
+        .overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--aims-blue), #000); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .login-box h2 { color: var(--aims-blue); margin-top: 0; }
         .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .login-box button { width: 100%; padding: 12px; background: var(--aims-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- SCORING PANEL (Modal) --- */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-            display: flex; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-card { background: white; padding: 25px; border-radius: 8px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        /* --- SCORING PANEL (The Terminal Panel) --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
+        .step-box { border-left: 4px solid var(--aims-blue); padding-left: 15px; margin: 20px 0; }
+        .btn-yes { background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-no { background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- DASHBOARD LAYOUT --- */
-        .sidebar { width: 250px; height: 100vh; background: var(--aims-blue); color: white; position: fixed; left: 0; top: 0; }
+        /* --- LAYOUT --- */
+        .sidebar { width: 250px; height: 100vh; background: var(--aims-blue); color: white; position: fixed; }
         .sidebar-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar ul { list-style: none; padding: 0; margin: 20px 0; }
+        .sidebar ul { list-style: none; padding: 0; }
         .sidebar li { padding: 15px 25px; cursor: pointer; transition: 0.3s; }
         .sidebar li:hover { background: var(--aims-light); }
-
         .main-content { margin-left: 250px; padding: 40px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .search-bar { padding: 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px; }
-
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
-        /* --- TABLE STYLE --- */
         table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: #edf2f7; padding: 12px; text-align: left; font-size: 0.85rem; }
+        th { background: #edf2f7; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn-add { background: #f0f4f8; border: 1px dashed #cbd5e0; padding: 5px 10px; cursor: pointer; width: 100%; }
-        .btn-del { color: #e53e3e; cursor: pointer; border: none; background: none; font-weight: bold; }
-        
-        .status-pass { color: green; font-weight: bold; }
-        .status-fail { color: red; font-weight: bold; }
+        .btn-add { background: #f0f4f8; border: 1px dashed #cbd5e0; padding: 8px; cursor: pointer; width: 100%; border-radius: 4px; }
+        .btn-add:hover { background: #e2e8f0; }
     </style>
 </head>
 <body>
@@ -69,58 +50,55 @@
 
     <div id="score-modal" class="modal-overlay hidden">
         <div class="modal-card">
-            <h3 id="modal-title">Enter Scores</h3>
-            <p id="modal-subtitle"></p>
-            <div style="margin-bottom: 15px;">
-                <label>Raw Score:</label>
-                <input type="number" id="raw-score" style="width:100%; padding:8px; margin-top:5px;">
+            <h2 id="modal-title" style="margin-top:0; color:var(--aims-blue);"></h2>
+            <div id="input-zone">
+                <div class="step-box">
+                    <p id="step-label">Enter Raw Score:</p>
+                    <input type="number" id="current-score" style="width:100%; padding:10px; font-size:1.1rem;" onkeydown="if(event.key==='Enter') nextStep()">
+                </div>
+                <div class="step-box hidden" id="total-box">
+                    <p>Enter Total Score:</p>
+                    <input type="number" id="current-total" style="width:100%; padding:10px; font-size:1.1rem;" onkeydown="if(event.key==='Enter') nextStep()">
+                </div>
+                <button onclick="nextStep()" id="main-action-btn" style="width:100%; padding:12px; background:var(--aims-blue); color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">CONTINUE (Enter)</button>
             </div>
-            <div style="margin-bottom: 15px;">
-                <label>Total Score:</label>
-                <input type="number" id="total-score" style="width:100%; padding:8px; margin-top:5px;">
+
+            <div id="loop-zone" class="hidden" style="text-align:center;">
+                <p style="font-weight:bold; font-size:1.1rem;">Add another activity for this term?</p>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+                    <button class="btn-yes" onclick="loopAnswer(true)">YES (Add More)</button>
+                    <button class="btn-no" onclick="loopAnswer(false)">NO (Go to Exam)</button>
+                </div>
             </div>
-            <button class="login-box button" onclick="processScoreEntry()" style="background: var(--aims-light); width: 100%;">Save Activity</button>
-            <button onclick="closeModal()" style="margin-top:10px; background:none; border:none; color:grey; cursor:pointer; width:100%;">Cancel</button>
+            
+            <button onclick="closeModal()" style="margin-top:20px; background:none; border:none; color:grey; cursor:pointer; width:100%;">Cancel and Exit</button>
         </div>
     </div>
 
     <div id="app" class="hidden">
         <nav class="sidebar">
-            <div class="sidebar-header">
-                <h3>ADMIN REGISTRAR</h3>
-            </div>
+            <div class="sidebar-header"><h3>ADMIN REGISTRAR</h3></div>
             <ul>
                 <li onclick="location.reload()">Dashboard</li>
                 <li onclick="wipeSystem()">Wipe System</li>
                 <li onclick="location.reload()">Logout</li>
             </ul>
         </nav>
-
         <main class="main-content">
             <header>
                 <h1>Grade Tracker</h1>
-                <input type="text" id="search" class="search-bar" placeholder="Search student name..." onkeyup="renderRecords()">
+                <input type="text" id="search" style="padding:10px; width:300px; border:1px solid #ccc; border-radius:4px;" placeholder="Search student name..." onkeyup="renderRecords()">
             </header>
-
             <div class="card">
                 <h3>Enroll New Student</h3>
-                <input type="text" id="newName" placeholder="Name" style="padding:8px;">
-                <input type="number" id="newAge" placeholder="Age" style="padding:8px; width:60px;">
-                <button onclick="addStudent()" style="padding:8px 15px; background:var(--aims-blue); color:white; border:none; border-radius:4px; cursor:pointer;">Add Student</button>
+                <input type="text" id="newName" placeholder="Full Name" style="padding:10px; border:1px solid #ddd;">
+                <input type="number" id="newAge" placeholder="Age" style="padding:10px; width:60px; border:1px solid #ddd;">
+                <button onclick="addStudent()" style="padding:10px 20px; background:var(--aims-blue); color:white; border:none; border-radius:4px; cursor:pointer;">Enroll</button>
             </div>
-
             <div class="card">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Prelim</th>
-                            <th>Midterm</th>
-                            <th>Endterm</th>
-                            <th>Average</th>
-                            <th>Status/Target</th>
-                            <th>Action</th>
-                        </tr>
+                        <tr><th>Name</th><th>Prelim (30%)</th><th>Midterm (30%)</th><th>Endterm (40%)</th><th>Average</th><th>Status</th><th>Action</th></tr>
                     </thead>
                     <tbody id="student-list"></tbody>
                 </table>
@@ -130,69 +108,92 @@
 
     <script>
         let students = JSON.parse(localStorage.getItem('tupv_records')) || [];
-        let currentEditing = { index: -1, term: '', type: '', sum: 0, count: 0 };
+        let state = { idx: -1, term: '', phase: 'weekly_raw', weeklyScores: [] };
 
         function checkLogin() {
-            const u = document.getElementById('userIn').value;
-            const p = document.getElementById('passIn').value;
-            if(u === "TUPV" && p === "MXE 1-A") {
+            if(document.getElementById('userIn').value === "TUPV" && document.getElementById('passIn').value === "MXE 1-A") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 renderRecords();
-            } else { alert("Invalid Credentials"); }
+            } else { alert("Denied"); }
         }
 
         function addStudent() {
-            const name = document.getElementById('newName').value;
-            const age = document.getElementById('newAge').value;
-            if(!name || !age) return;
-            students.push({ name, age, prelim: -1, midterm: -1, endterm: -1, average: 0 });
-            document.getElementById('newName').value = '';
-            document.getElementById('newAge').value = '';
+            const n = document.getElementById('newName').value;
+            const a = document.getElementById('newAge').value;
+            if(!n || !a) return;
+            students.push({ name: n, age: a, prelim: -1, midterm: -1, endterm: -1, average: 0 });
+            document.getElementById('newName').value = ''; document.getElementById('newAge').value = '';
             save();
         }
 
-        function openScorePanel(index, term) {
-            currentEditing = { index, term, type: 'Weekly', sum: 0, count: 0 };
-            updateModalUI();
+        function openScorePanel(idx, term) {
+            state = { idx, term, phase: 'weekly_raw', weeklyScores: [] };
+            document.getElementById('modal-title').innerText = `${term.toUpperCase()} - Weekly Activity #${state.weeklyScores.length + 1}`;
+            resetModalInputs();
             document.getElementById('score-modal').classList.remove('hidden');
+            document.getElementById('current-score').focus();
         }
 
-        function updateModalUI() {
-            document.getElementById('modal-title').innerText = `${currentEditing.term.toUpperCase()} Entry`;
-            document.getElementById('modal-subtitle').innerText = `Step: Entering ${currentEditing.type} Assessments`;
-        }
+        function nextStep() {
+            const raw = parseFloat(document.getElementById('current-score').value);
+            const tot = parseFloat(document.getElementById('current-total').value);
 
-        function processScoreEntry() {
-            const raw = parseFloat(document.getElementById('raw-score').value);
-            const tot = parseFloat(document.getElementById('total-score').value);
-            if(isNaN(raw) || isNaN(tot) || tot <= 0) return alert("Invalid scores");
-
-            const scaled = ((raw / tot) * 9) + 1;
-            currentEditing.sum += scaled;
-            currentEditing.count++;
-
-            if(confirm("Add another activity for this assessment?")) {
-                document.getElementById('raw-score').value = '';
-                document.getElementById('total-score').value = '';
-            } else {
-                const finalWeekly = currentEditing.sum / currentEditing.count;
-                // Now move to Major Exam
-                let mRaw = parseFloat(prompt("Enter Major Exam Raw Score:"));
-                let mTot = parseFloat(prompt("Enter Major Exam Total Score:"));
-                let finalMajor = ((mRaw / mTot) * 9) + 1;
-
-                // 60/40 Split
-                const termGrade = (finalWeekly * 0.6) + (finalMajor * 0.4);
-                students[currentEditing.index][currentEditing.term.toLowerCase()] = termGrade;
+            if (state.phase === 'weekly_raw') {
+                document.getElementById('total-box').classList.remove('hidden');
+                state.phase = 'weekly_total';
+                document.getElementById('current-total').focus();
+            } 
+            else if (state.phase === 'weekly_total') {
+                if(isNaN(raw) || isNaN(tot) || tot <= 0) return alert("Invalid entry");
+                state.weeklyScores.push(((raw/tot)*9)+1);
                 
-                refreshStudentAvg(students[currentEditing.index]);
+                document.getElementById('input-zone').classList.add('hidden');
+                document.getElementById('loop-zone').classList.remove('hidden');
+            }
+            else if (state.phase === 'major_raw') {
+                document.getElementById('total-box').classList.remove('hidden');
+                state.phase = 'major_total';
+                document.getElementById('current-total').focus();
+            }
+            else if (state.phase === 'major_total') {
+                if(isNaN(raw) || isNaN(tot) || tot <= 0) return alert("Invalid entry");
+                const majorGrade = ((raw/tot)*9)+1;
+                const weeklyAvg = state.weeklyScores.reduce((a,b)=>a+b, 0) / state.weeklyScores.length;
+                
+                // 60/40 Split
+                const finalTermGrade = (weeklyAvg * 0.6) + (majorGrade * 0.4);
+                students[state.idx][state.term.toLowerCase()] = finalTermGrade;
+                
+                recalcStudent(students[state.idx]);
                 closeModal();
                 save();
             }
         }
 
-        function refreshStudentAvg(s) {
+        function loopAnswer(wantsMore) {
+            if (wantsMore) {
+                state.phase = 'weekly_raw';
+                document.getElementById('modal-title').innerText = `${state.term.toUpperCase()} - Weekly Activity #${state.weeklyScores.length + 1}`;
+                resetModalInputs();
+            } else {
+                state.phase = 'major_raw';
+                document.getElementById('modal-title').innerText = `${state.term.toUpperCase()} - Major Exam`;
+                resetModalInputs();
+                document.getElementById('step-label').innerText = "Enter Major Exam Raw Score:";
+            }
+        }
+
+        function resetModalInputs() {
+            document.getElementById('input-zone').classList.remove('hidden');
+            document.getElementById('loop-zone').classList.add('hidden');
+            document.getElementById('total-box').classList.add('hidden');
+            document.getElementById('current-score').value = '';
+            document.getElementById('current-total').value = '';
+            document.getElementById('current-score').focus();
+        }
+
+        function recalcStudent(s) {
             let p = s.prelim === -1 ? 0 : s.prelim;
             let m = s.midterm === -1 ? 0 : s.midterm;
             let e = s.endterm === -1 ? 0 : s.endterm;
@@ -203,38 +204,25 @@
             const list = document.getElementById('student-list');
             const search = document.getElementById('search').value.toLowerCase();
             list.innerHTML = '';
-
             students.forEach((s, i) => {
                 if(!s.name.toLowerCase().includes(search)) return;
-
-                let target = "";
-                if(s.endterm === -1) {
-                    let pts = (s.prelim !== -1 ? s.prelim * 0.3 : 0) + (s.midterm !== -1 ? s.midterm * 0.3 : 0);
-                    let weightLeft = 1 - ((s.prelim !== -1 ? 0.3 : 0) + (s.midterm !== -1 ? 0.3 : 0));
-                    let needed = (5.0 - pts) / weightLeft;
-                    target = needed > 10 ? "CRITICAL" : needed <= 1 ? "SAFE" : `Need ${needed.toFixed(2)}`;
-                } else {
-                    target = s.average >= 5.0 ? '<span class="status-pass">PASSED</span>' : '<span class="status-fail">FAILED</span>';
-                }
-
-                list.innerHTML += `
-                    <tr>
-                        <td>${s.name} (Age: ${s.age})</td>
-                        <td><button class="btn-add" onclick="openScorePanel(${i}, 'prelim')">${s.prelim === -1 ? '+' : s.prelim.toFixed(2)}</button></td>
-                        <td><button class="btn-add" onclick="openScorePanel(${i}, 'midterm')">${s.midterm === -1 ? '+' : s.midterm.toFixed(2)}</button></td>
-                        <td><button class="btn-add" onclick="openScorePanel(${i}, 'endterm')">${s.endterm === -1 ? '+' : s.endterm.toFixed(2)}</button></td>
-                        <td><b>${s.average.toFixed(2)}</b></td>
-                        <td>${target}</td>
-                        <td><button class="btn-del" onclick="del(${i})">Delete</button></td>
-                    </tr>
-                `;
+                let stat = s.endterm === -1 ? "INC" : (s.average >= 5.0 ? "PASS" : "FAIL");
+                list.innerHTML += `<tr>
+                    <td><b>${s.name.toUpperCase()}</b></td>
+                    <td><button class="btn-add" onclick="openScorePanel(${i},'prelim')">${s.prelim===-1?'+':s.prelim.toFixed(2)}</button></td>
+                    <td><button class="btn-add" onclick="openScorePanel(${i},'midterm')">${s.midterm===-1?'+':s.midterm.toFixed(2)}</button></td>
+                    <td><button class="btn-add" onclick="openScorePanel(${i},'endterm')">${s.endterm===-1?'+':s.endterm.toFixed(2)}</button></td>
+                    <td>${s.average.toFixed(2)}</td>
+                    <td class="${stat==='PASS'?'status-pass':'status-fail'}">${stat}</td>
+                    <td><button class="btn-del" onclick="del(${i})">Delete</button></td>
+                </tr>`;
             });
         }
 
         function del(i) { if(confirm("Delete student?")) { students.splice(i,1); save(); } }
-        function wipeSystem() { if(confirm("WIPE EVERYTHING?")) { students = []; save(); } }
         function save() { localStorage.setItem('tupv_records', JSON.stringify(students)); renderRecords(); }
         function closeModal() { document.getElementById('score-modal').classList.add('hidden'); }
+        function wipeSystem() { if(confirm("WIPE ALL?")) { students = []; save(); } }
     </script>
 </body>
 </html>
