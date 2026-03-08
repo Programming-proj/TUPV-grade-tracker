@@ -3,62 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUPV AIMS | Master Portal</title>
+    <title>TUPV AIMS | 10-Point Scale</title>
     <style>
         :root { --tup-red: #800000; --tup-dark: #600000; --bg: #f8f0f0; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
         .hidden { display: none !important; }
 
-        /* Login Screen */
-        .overlay { position: fixed; inset: 0; background: var(--tup-red); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        
-        /* Layout */
+        /* NEW GPA Colors (10 is best, 5 is passing) */
+        .gpa-excellent { background: #c6f6d5; color: #22543d; border-radius: 4px; padding: 2px 6px; font-weight: bold; } /* 8.5 - 10.0 */
+        .gpa-passing { background: #e2e8f0; color: #2d3748; border-radius: 4px; padding: 2px 6px; font-weight: bold; }   /* 5.0 - 8.4 */
+        .gpa-fail { background: #fed7d7; color: #822727; border-radius: 4px; padding: 2px 6px; font-weight: bold; }      /* 1.0 - 4.9 */
+
+        /* Layout & UI */
         .sidebar { width: 240px; height: 100vh; background: var(--tup-red); color: white; position: fixed; }
         .sidebar-header { padding: 25px; text-align: center; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); }
         .sidebar li { padding: 15px 20px; cursor: pointer; list-style: none; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar li:hover, .sidebar li.active { background: var(--tup-dark); border-left: 5px solid #ff0000; }
         .content { margin-left: 240px; padding: 30px; }
-
-        /* UI Elements */
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(128,0,0,0.1); margin-bottom: 20px; border-left: 4px solid var(--tup-red); }
-        .dna-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #eee; font-size: 0.75rem; margin-right: 5px; font-weight: bold; color: var(--tup-red); }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; background: #fff5f5; padding: 12px; border-bottom: 2px solid var(--tup-red); color: var(--tup-red); font-size: 0.8rem; }
         td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
-
         .btn-prime { background: var(--tup-red); color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-
-        /* Modals */
+        .btn-sec { background: #eee; color: #333; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin: 2px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .overlay { position: fixed; inset: 0; background: var(--tup-red); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 450px; border-top: 8px solid var(--tup-red); }
+        .modal-card { background: white; padding: 30px; border-radius: 8px; width: 400px; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="overlay">
-        <div class="login-box">
-            <h2 style="color:var(--tup-red); margin:0;">TUPV AIMS</h2>
-            <p style="margin-bottom:20px; color:#666;">Portal Access</p>
-            <input type="text" id="uIn" placeholder="Username (TUPV)">
-            <input type="password" id="pIn" placeholder="Password (MXE 1-A)">
-            <button class="btn-prime" onclick="handleLogin()">LOGIN</button>
-            <p id="login-err" style="color:red; font-size:0.8rem; margin-top:10px;" class="hidden">Access Denied: Try Again</p>
-        </div>
-    </div>
-
-    <div id="sim-modal" class="modal-bg hidden">
-        <div class="modal-card">
-            <h3 id="sim-name" style="margin-top:0; color:var(--tup-red)"></h3>
-            <p>Simulate **Endterm** impact on final average:</p>
-            <input type="range" min="1" max="10" step="0.1" id="sim-range" style="width:100%; accent-color:var(--tup-red);" oninput="runSim()">
-            <div style="background:#f9f9f9; padding:15px; text-align:center; margin-top:10px; border-radius:8px;">
-                Endterm: <b id="sim-label">5.0</b> <br>
-                <span style="font-size:1.5rem; color:var(--tup-red)">Avg: <b id="sim-res">0.00</b></span>
-            </div>
-            <button class="btn-prime" style="margin-top:15px;" onclick="closeModal('sim-modal')">Close</button>
+        <div style="background:white; padding:40px; border-radius:8px; text-align:center; width:300px;">
+            <h2 style="color:var(--tup-red)">TUPV AIMS</h2>
+            <input type="text" id="uIn" placeholder="TUPV" style="width:100%"><br>
+            <input type="password" id="pIn" placeholder="MXE 1-A" style="width:100%"><br>
+            <button class="btn-prime" onclick="handleLoginAttempt()">LOGIN</button>
         </div>
     </div>
 
@@ -68,14 +49,14 @@
             <div id="step-inputs">
                 <input type="number" id="m-raw" placeholder="Raw Score" style="width:100%; margin-bottom:10px;">
                 <input type="number" id="m-tot" placeholder="Total Score" style="width:100%; margin-bottom:10px;">
-                <button class="btn-prime" onclick="processStep()">Next Step</button>
+                <button class="btn-prime" onclick="processStep()">Save Entry</button>
             </div>
             <div id="step-confirm" class="hidden" style="text-align:center;">
                 <p>Add another activity?</p>
                 <button class="btn-sec" onclick="handleYN(true)">YES</button>
                 <button class="btn-sec" style="background:var(--tup-red); color:white;" onclick="handleYN(false)">NO</button>
             </div>
-            <button onclick="closeModal('score-modal')" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
@@ -83,7 +64,201 @@
         <nav class="sidebar">
             <div class="sidebar-header">TUPV REGISTRAR</div>
             <ul>
-                <li id="nav-dash" class="active" onclick="tab('dash')">📊 Overview Dash</li>
-                <li id="nav-edit" onclick="tab('edit')">✏️ Manage Records</li>
-                <li id="nav-sys" onclick="tab('sys')">⚙️ System Settings</li>
-                <li onclick="location.reload()" style="color:#ff
+                <li id="nav-dash" class="active" onclick="tab('dash')">📊 Dashboard</li>
+                <li id="nav-sys" onclick="tab('sys')">⚙️ System Tools</li>
+                <li onclick="location.reload()" style="color:#ffaaaa; margin-top:20px;">🔒 Logout</li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <div id="view-dash">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2>Academic Records (10pt Scale)</h2>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="search-box" placeholder="Search..." onkeyup="render()">
+                        <select id="sub-filter" onchange="render()"></select>
+                        <button class="btn-sec" style="background:#2d3748; color:white;" onclick="exportToExcel()">📊 Export Excel</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="nName" placeholder="Student Name" style="flex:2">
+                        <input type="number" id="nAge" placeholder="Age" style="flex:0.5">
+                        <button class="btn-prime" style="flex:1" onclick="enroll()">ENROLL</button>
+                    </div>
+                </div>
+
+                <div class="card"><table id="dash-table"></table></div>
+            </div>
+
+            <div id="view-sys" class="hidden">
+                <h2>System Management</h2>
+                <div class="card">
+                    <h3>Configure Subjects</h3>
+                    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+                        <input type="text" id="s-name" placeholder="Name">
+                        <input type="number" id="s-act" placeholder="Act %" step="0.05">
+                        <input type="number" id="s-exm" placeholder="Ex %" step="0.05">
+                        <input type="number" id="s-att" placeholder="At %" step="0.05">
+                        <button class="btn-prime" onclick="saveSubject()">ADD</button>
+                    </div>
+                    <table id="sj-table"></table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let config = JSON.parse(localStorage.getItem('aims_v12_cfg')) || { "Programming": { act: 0.5, exam: 0.4, att: 0.1 } };
+        let db = JSON.parse(localStorage.getItem('aims_v12_db')) || [];
+        let state = { idx: -1, term: '', mode: 'weekly', weeklyData: [], ex: -1, att: -1 };
+
+        function handleLoginAttempt() {
+            const u = document.getElementById('uIn').value.trim().toUpperCase();
+            const p = document.getElementById('pIn').value.trim().toUpperCase();
+            if (u === "TUPV" && p === "MXE 1-A") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                init();
+            }
+        }
+
+        function tab(t) {
+            ['dash', 'sys'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+            document.getElementById('view-'+t).classList.remove('hidden');
+            render();
+        }
+
+        function saveSubject() {
+            const n = document.getElementById('s-name').value;
+            const act = parseFloat(document.getElementById('s-act').value) || 0;
+            const exm = parseFloat(document.getElementById('s-exm').value) || 0;
+            const att = parseFloat(document.getElementById('s-att').value) || 0;
+            const total = act + exm + att;
+            if (Math.abs(total - 1.0) > 0.0001) return alert("Error: Total must equal 1.0 (100%)");
+            config[n] = { act, exam: exm, att };
+            localStorage.setItem('aims_v12_cfg', JSON.stringify(config));
+            init();
+        }
+
+        function enroll() {
+            const n = document.getElementById('nName').value.trim();
+            const a = document.getElementById('nAge').value;
+            if(!n || !a) return;
+            Object.keys(config).forEach(sub => {
+                db.push({ name: n, age: a, subject: sub, prelim: -1, midterm: -1, endterm: -1, avg: 0 });
+            });
+            save();
+        }
+
+        function init() {
+            document.getElementById('sub-filter').innerHTML = Object.keys(config).map(k => `<option value="${k}">${k}</option>`).join('');
+            render();
+        }
+
+        // --- NEW GPA LOGIC (10 IS BEST) ---
+        function getGpaClass(avg) {
+            if (avg < 0 || avg === 0) return ""; 
+            if (avg >= 8.5) return "gpa-excellent"; // Honor Roll
+            if (avg >= 5.0) return "gpa-passing";   // Passed
+            return "gpa-fail";                     // Failed
+        }
+
+        function render() {
+            const sub = document.getElementById('sub-filter').value;
+            const search = document.getElementById('search-box').value.toLowerCase();
+            
+            let dRows = `<tr><th>Student</th><th>P</th><th>M</th><th>E</th><th>Final Avg</th><th>Input Grade</th></tr>`;
+            db.filter(s => s.subject === sub && s.name.toLowerCase().includes(search)).forEach(s => {
+                const i = db.indexOf(s);
+                dRows += `<tr>
+                    <td><b>${s.name.toUpperCase()}</b></td>
+                    <td>${s.prelim < 0 ? "-" : s.prelim.toFixed(2)}</td>
+                    <td>${s.midterm < 0 ? "-" : s.midterm.toFixed(2)}</td>
+                    <td>${s.endterm < 0 ? "-" : s.endterm.toFixed(2)}</td>
+                    <td><span class="${getGpaClass(s.avg)}">${s.avg <= 0 ? "-" : s.avg.toFixed(2)}</span></td>
+                    <td>
+                        <button class="btn-sec" onclick="openInput(${i},'prelim')">P</button>
+                        <button class="btn-sec" onclick="openInput(${i},'midterm')">M</button>
+                        <button class="btn-sec" onclick="openInput(${i},'endterm')">E</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('dash-table').innerHTML = dRows;
+            document.getElementById('sj-table').innerHTML = `<tr><th>Subject</th><th>Split</th><th>Action</th></tr>` + 
+                Object.keys(config).map(k => `<tr><td>${k}</td><td>${config[k].act}/${config[k].exam}/${config[k].att}</td><td><button onclick="delSubject('${k}')">❌</button></td></tr>`).join('');
+        }
+
+        function openInput(i, t) {
+            state = { idx: i, term: t, mode: 'weekly', weeklyData: [], ex: -1, att: -1 };
+            showStep();
+            document.getElementById('score-modal').classList.remove('hidden');
+        }
+
+        function showStep() {
+            document.getElementById('step-inputs').classList.remove('hidden');
+            document.getElementById('step-confirm').classList.add('hidden');
+            document.getElementById('m-title').innerText = `${state.term.toUpperCase()} - ${state.mode}`;
+            document.getElementById('m-raw').value = ''; document.getElementById('m-tot').value = '';
+        }
+
+        function processStep() {
+            const r = parseFloat(document.getElementById('m-raw').value);
+            const t = parseFloat(document.getElementById('m-tot').value);
+            if(isNaN(r) || isNaN(t)) return;
+            
+            // --- UPDATED MATH: (Score/Total) * 9 + 1 ---
+            // Example: 100/100 -> 1 * 9 + 1 = 10.0
+            // Example: 0/100 -> 0 * 9 + 1 = 1.0
+            const scaled = ((r/t)*9)+1;
+
+            if(state.mode === 'weekly') {
+                state.weeklyData.push(scaled);
+                document.getElementById('step-inputs').classList.add('hidden');
+                document.getElementById('step-confirm').classList.remove('hidden');
+            } else if(state.mode === 'exam') {
+                state.ex = scaled;
+                if(config[db[state.idx].subject].att > 0) { state.mode = 'att'; showStep(); }
+                else finalize();
+            } else { state.att = scaled; finalize(); }
+        }
+
+        function handleYN(y) { if(y) showStep(); else { state.mode = 'exam'; showStep(); } }
+
+        function finalize() {
+            const cfg = config[db[state.idx].subject];
+            const wAvg = state.weeklyData.length > 0 ? (state.weeklyData.reduce((a,b)=>a+b,0)/state.weeklyData.length) : 1.0; 
+            const examVal = state.ex === -1 ? 1.0 : state.ex;
+            const attVal = state.att === -1 ? 1.0 : state.att;
+
+            db[state.idx][state.term.toLowerCase()] = (wAvg * cfg.act) + (examVal * cfg.exam) + (attVal * (cfg.att||0));
+            const s = db[state.idx];
+            const p = s.prelim < 0 ? 0 : s.prelim;
+            const m = s.midterm < 0 ? 0 : s.midterm;
+            const e = s.endterm < 0 ? 0 : s.endterm;
+            s.avg = (p*0.3)+(m*0.3)+(e*0.4);
+            
+            save(); closeModal();
+        }
+
+        function exportToExcel() {
+            const sub = document.getElementById('sub-filter').value;
+            let csv = `Student Name,Age,Prelim,Midterm,Endterm,Final Average\n`;
+            db.filter(s => s.subject === sub).forEach(s => {
+                csv += `${s.name},${s.age},${s.prelim},${s.midterm},${s.endterm},${s.avg}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `Grades_${sub}.csv`);
+            a.click();
+        }
+
+        function save() { localStorage.setItem('aims_v12_db', JSON.stringify(db)); render(); }
+        function closeModal() { document.getElementById('score-modal').classList.add('hidden'); }
+        function delSubject(n) { delete config[n]; localStorage.setItem('aims_v12_cfg', JSON.stringify(config)); init(); }
+    </script>
+</body>
+</html>
